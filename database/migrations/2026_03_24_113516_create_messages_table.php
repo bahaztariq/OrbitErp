@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('conversation_id')->nullable()->constrained('conversations')->onDelete('set null');
+            $table->foreignId('sender_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->text('message');
+            $table->boolean('is_read')->default(false);
+            $table->boolean('is_deleted')->default(false);
+            $table->boolean('is_edited')->default(false);
             $table->timestamps();
         });
     }

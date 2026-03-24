@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('zip')->nullable();
+            $table->string('country')->nullable();
+            $table->string('logo')->nullable();
+            $table->text('notes')->nullable();
+            $table->foreignId('company_id')->nullable()->constrained('companies')->onDelete('set null');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

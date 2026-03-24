@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('invoice_id')->nullable()->constrained('invoices')->onDelete('set null');
+            $table->decimal('amount', 10, 2);
+            $table->date('payment_date')->nullable();
+            $table->string('payment_method')->nullable();
+            $table->string('transaction_id')->nullable();
+            $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
+            $table->foreignId('company_id')->nullable()->constrained('companies')->onDelete('set null');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

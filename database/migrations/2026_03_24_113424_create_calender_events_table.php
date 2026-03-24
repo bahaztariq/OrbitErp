@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('calender_events', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->dateTime('event_date');
+            $table->foreignId('company_id')->nullable()->constrained('companies')->onDelete('set null');
             $table->timestamps();
         });
     }
