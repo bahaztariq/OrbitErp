@@ -12,7 +12,7 @@ class StoreSupplierRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,33 @@ class StoreSupplierRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:suppliers,email',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:100',
+            'state' => 'nullable|string|max:100',
+            'zip' => 'nullable|string|max:20',
+            'country' => 'nullable|string|max:100',
+            'logo' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'company_id' => 'required|exists:companies,id',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'The supplier name is required.',
+            'email.required' => 'The supplier email is required.',
+            'email.email' => 'Please provide a valid email address.',
+            'email.unique' => 'This email is already registered for another supplier.',
+            'company_id.required' => 'A company must be assigned to this supplier.',
         ];
     }
 }

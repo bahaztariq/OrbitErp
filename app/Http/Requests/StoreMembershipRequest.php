@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePermissionRequest extends FormRequest
+class StoreMembershipRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,13 +17,13 @@ class StorePermissionRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:permissions,name',
-            'description' => 'nullable|string',
+            'user_id' => 'required|exists:users,id',
+            'company_id' => 'required|exists:companies,id',
         ];
     }
 
@@ -36,10 +35,12 @@ class StorePermissionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'The permission name is required.',
-            'name.unique' => 'This permission name already exists.',
-            'slug.required' => 'The permission slug is required.',
-            'slug.unique' => 'This permission slug already exists.',
+            'user_id.required' => 'The user is required for membership.',
+            'company_id.required' => 'The company is required for membership.',
+            'role_id.required' => 'A role must be assigned to this membership.',
+            'status.in' => 'The status must be one of: active, inactive, pending.',
         ];
     }
+
+    
 }

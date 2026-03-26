@@ -12,7 +12,7 @@ class UpdateCompanyRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,24 @@ class UpdateCompanyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:companies,slug,' . $this->company->id,
+            'description' => 'nullable|string',
+            'is_active' => 'boolean',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'The company name is required.',
+            'slug.required' => 'The company slug is required.',
+            'slug.unique' => 'This company slug is already in use by another company.',
         ];
     }
 }

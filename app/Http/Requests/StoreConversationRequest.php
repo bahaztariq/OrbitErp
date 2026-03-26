@@ -12,7 +12,7 @@ class StoreConversationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,23 @@ class StoreConversationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'user_1_id' => 'nullable|exists:users,id',
+            'user_2_id' => 'nullable|exists:users,id',
+            'company_id' => 'required|exists:companies,id',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'company_id.required' => 'A company must be associated with this conversation.',
         ];
     }
 }

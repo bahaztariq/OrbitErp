@@ -12,7 +12,7 @@ class UpdatePermissionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,23 @@ class UpdatePermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'sometimes|required|string|max:255|unique:permissions,name,' . $this->permission->id,
+            'description' => 'nullable|string',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'The permission name is required.',
+            'name.unique' => 'This permission name already exists.',
+            'slug.required' => 'The permission slug is required.',
+            'slug.unique' => 'This permission slug already exists.',
         ];
     }
 }

@@ -12,7 +12,7 @@ class UpdateCalenderEventRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,25 @@ class UpdateCalenderEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'event_date' => 'sometimes|required|date',
+            'company_id' => 'sometimes|required|exists:companies,id',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'The event title is required.',
+            'event_date.required' => 'The event date is required.',
+            'event_date.date' => 'Please provide a valid date and time.',
+            'company_id.required' => 'A company must be assigned to this event.',
         ];
     }
 }

@@ -12,7 +12,7 @@ class UpdateMessageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,22 @@ class UpdateMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'message' => 'sometimes|required|string',
+            'is_read' => 'boolean',
+            'is_deleted' => 'boolean',
+            'is_edited' => 'boolean',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'message.required' => 'The message content cannot be empty.',
         ];
     }
 }

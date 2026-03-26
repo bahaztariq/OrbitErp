@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateConversationRequest extends FormRequest
+class UpdateMembershipRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,15 +17,12 @@ class UpdateConversationRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'user_1_id' => 'nullable|exists:users,id',
-            'user_2_id' => 'nullable|exists:users,id',
+            'user_id' => 'sometimes|required|exists:users,id',
             'company_id' => 'sometimes|required|exists:companies,id',
         ];
     }
@@ -39,7 +35,10 @@ class UpdateConversationRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'company_id.required' => 'A company must be associated with this conversation.',
+            'user_id.required' => 'The user is required for membership.',
+            'company_id.required' => 'The company is required for membership.',
+            'role_id.required' => 'A role must be assigned to this membership.',
+            'status.in' => 'The status must be one of: active, inactive, pending.',
         ];
     }
 }
