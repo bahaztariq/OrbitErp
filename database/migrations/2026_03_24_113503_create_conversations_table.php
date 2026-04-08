@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_1_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignId('user_2_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('name')->nullable();
             $table->foreignId('company_id')->nullable()->constrained('companies')->onDelete('set null');
             $table->timestamps();
         });
