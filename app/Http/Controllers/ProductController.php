@@ -2,65 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
+use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Product;
+use App\Models\Company;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Company $company)
     {
-        //
+        $products = $company->products;
+        return view('products.index', compact('products', 'company'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show(Company $company, Product $product)
     {
-        //
+        return view('products.show', compact('product', 'company'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreProductRequest $request)
+    public function create(Company $company)
     {
-        //
+        return view('products.create', compact('company'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
+    public function store(StoreProductRequest $request, Company $company)
     {
-        //
+        $product = $company->products()->create($request->validated());
+
+        return redirect()->route('products.show', [$company->slug, $product->id])
+            ->with('success', 'Product created successfully');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
+    public function edit(Company $company, Product $product)
     {
-        //
+        return view('products.edit', compact('product', 'company'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Company $company, Product $product)
     {
-        //
+        $product->update($request->validated());
+
+        return redirect()->route('products.show', [$company->slug, $product->id])
+            ->with('success', 'Product updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product)
+    public function destroy(Company $company, Product $product)
     {
-        //
+        $product->delete();
+        return redirect()->route('products.index', $company->slug)
+            ->with('success', 'Product deleted successfully');
     }
 }

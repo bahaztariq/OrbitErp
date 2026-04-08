@@ -2,65 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePermissionRequest;
-use App\Http\Requests\UpdatePermissionRequest;
+use App\Http\Requests\Permission\StorePermissionRequest;
+use App\Http\Requests\Permission\UpdatePermissionRequest;
 use App\Models\Permission;
+use App\Models\Company;
+use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Company $company)
     {
-        //
+        $permissions = $company->permissions;
+        return view('permissions.index', compact('permissions', 'company'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Company $company)
     {
-        //
+        return view('permissions.create', compact('company'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePermissionRequest $request)
+    public function store(StorePermissionRequest $request, Company $company)
     {
-        //
+        $permission = $company->permissions()->create($request->validated());
+        return redirect()->route('permissions.index', $company->slug)
+            ->with('success', 'Permission created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Permission $permission)
+    public function show(Company $company, Permission $permission)
     {
-        //
+        return view('permissions.show', compact('permission', 'company'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Permission $permission)
+    public function edit(Company $company, Permission $permission)
     {
-        //
+        return view('permissions.edit', compact('permission', 'company'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePermissionRequest $request, Permission $permission)
+    public function update(UpdatePermissionRequest $request, Company $company, Permission $permission)
     {
-        //
+        $permission->update($request->validated());
+        return redirect()->route('permissions.index', $company->slug)
+            ->with('success', 'Permission updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Permission $permission)
+    public function destroy(Company $company, Permission $permission)
     {
-        //
+        $permission->delete();
+        return redirect()->route('permissions.index', $company->slug)
+            ->with('success', 'Permission deleted successfully');
+    }
+
+    public function restore(Company $company, $id)
+    {
+        $permission = $company->permissions()->onlyTrashed()->findOrFail($id);
+        $permission->restore();
+        return redirect()->route('permissions.index', $company->slug)
+            ->with('success', 'Permission restored successfully');
+    }
+
+    public function forceDelete(Company $company, $id)
+    {
+        $permission = $company->permissions()->onlyTrashed()->findOrFail($id);
+        $permission->forceDelete();
+        return redirect()->route('permissions.index', $company->slug)
+            ->with('success', 'Permission permanently deleted');
     }
 }

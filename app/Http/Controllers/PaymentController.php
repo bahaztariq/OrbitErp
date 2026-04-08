@@ -2,65 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePaymentRequest;
-use App\Http\Requests\UpdatePaymentRequest;
+use App\Http\Requests\Payment\StorePaymentRequest;
+use App\Http\Requests\Payment\UpdatePaymentRequest;
 use App\Models\Payment;
+use App\Models\Company;
+use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Company $company)
     {
-        //
+        $payments = $company->payments;
+        return view('payments.index', compact('payments', 'company'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Company $company)
     {
-        //
+        return view('payments.create', compact('company'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePaymentRequest $request)
+    public function store(StorePaymentRequest $request, Company $company)
     {
-        //
+        $payment = $company->payments()->create($request->validated());
+        return redirect()->route('payments.index', $company->slug)
+            ->with('success', 'Payment created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Payment $payment)
+    public function show(Company $company, Payment $payment)
     {
-        //
+        return view('payments.show', compact('payment', 'company'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Payment $payment)
+    public function edit(Company $company, Payment $payment)
     {
-        //
+        return view('payments.edit', compact('payment', 'company'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePaymentRequest $request, Payment $payment)
+    public function update(UpdatePaymentRequest $request, Company $company, Payment $payment)
     {
-        //
+        $payment->update($request->validated());
+        return redirect()->route('payments.index', $company->slug)
+            ->with('success', 'Payment updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Payment $payment)
+    public function destroy(Company $company, Payment $payment)
     {
-        //
+        $payment->delete();
+        return redirect()->route('payments.index', $company->slug)
+            ->with('success', 'Payment deleted successfully');
+    }
+
+    public function restore(Company $company, $id)
+    {
+        $payment = $company->payments()->onlyTrashed()->findOrFail($id);
+        $payment->restore();
+        return redirect()->route('payments.index', $company->slug)
+            ->with('success', 'Payment restored successfully');
+    }
+
+    public function forceDelete(Company $company, $id)
+    {
+        $payment = $company->payments()->onlyTrashed()->findOrFail($id);
+        $payment->forceDelete();
+        return redirect()->route('payments.index', $company->slug)
+            ->with('success', 'Payment permanently deleted');
     }
 }

@@ -2,65 +2,82 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreMessageRequest;
-use App\Http\Requests\UpdateMessageRequest;
+use App\Http\Requests\Message\StoreMessageRequest;
+use App\Http\Requests\Message\UpdateMessageRequest;
 use App\Models\Message;
+use App\Models\Company;
+use App\Models\Conversation;
+use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Company $company)
     {
-        //
+        $messages = Message::whereHas('conversation', function ($query) use ($company) {
+            $query->where('company_id', $company->id);
+        })->get();
+
+        return view('messages.index', compact('messages', 'company'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreMessageRequest $request, Company $company)
     {
-        //
+        $conversation = $company->conversations()->findOrFail($request->conversation_id);
+        
+        $message = $conversation->messages()->create($request->validated() + [
+            'sender_id' => auth()->id()
+        ]);
+
+        return redirect()->route('conversations.show', [$company->slug, $conversation->id])
+            ->with('success', 'Message sent successfully');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreMessageRequest $request)
+    public function show(Company $company, Message $message)
     {
-        //
+        if ($message->conversation->company_id !== $company->id) {
+            abort(403);
+        }
+
+        return view('messages.show', compact('message', 'company'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Message $message)
+    public function update(UpdateMessageRequest $request, Company $company, Message $message)
     {
-        //
+        if ($message->conversation->company_id !== $company->id) {
+            abort(403);
+        }
+
+        $message->update($request->validated());
+        return redirect()->back()->with('success', 'Message updated successfully');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Message $message)
+    public function destroy(Company $company, Message $message)
     {
-        //
+        if ($message->conversation->company_id !== $company->id) {
+            abort(403);
+        }
+
+        $message->delete();
+        return redirect()->back()->with('success', 'Message deleted successfully');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateMessageRequest $request, Message $message)
+    public function restore(Company $company, $id)
     {
-        //
+        $message = Message::onlyTrashed()->whereHas('conversation', function ($query) use ($company) {
+            $query->where('company_id', $company->id);
+        })->findOrFail($id);
+        
+        $message->restore();
+        return redirect()->back()->with('success', 'Message restored successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Message $message)
+    public function forceDelete(Company $company, $id)
     {
-        //
+        $message = Message::onlyTrashed()->whereHas('conversation', function ($query) use ($company) {
+            $query->where('company_id', $company->id);
+        })->findOrFail($id);
+        
+        $message->forceDelete();
+        return redirect()->back()->with('success', 'Message permanently deleted');
     }
 }

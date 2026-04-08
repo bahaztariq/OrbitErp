@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCompanyRequest;
-use App\Http\Requests\UpdateCompanyRequest;
+use App\Http\Requests\Company\StoreCompanyRequest;
+use App\Http\Requests\Company\UpdateCompanyRequest;
 use App\Models\Company;
+use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
@@ -13,7 +14,8 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        //
+        $companies = auth()->user()->companies;
+        return view('companies.index', compact('companies'));
     }
 
     /**
@@ -21,7 +23,7 @@ class CompanyController extends Controller
      */
     public function create()
     {
-        //
+        return view('companies.create');
     }
 
     /**
@@ -29,7 +31,10 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request)
     {
-        //
+        $company = $request->user()->companies()->create($request->validated());
+
+        return redirect()->route('companies.show', $company->slug)
+            ->with('success', 'Company created successfully');
     }
 
     /**
@@ -37,7 +42,7 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
-        //
+        return view('companies.show', compact('company'));
     }
 
     /**
@@ -45,7 +50,7 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
-        //
+        return view('companies.edit', compact('company'));
     }
 
     /**
@@ -53,7 +58,10 @@ class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request, Company $company)
     {
-        //
+        $company->update($request->validated());
+
+        return redirect()->route('companies.show', $company->slug)
+            ->with('success', 'Company updated successfully');
     }
 
     /**
@@ -61,6 +69,32 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        $company->delete();
+        return redirect()->route('companies.index')
+            ->with('success', 'Company deleted successfully');
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore($id)
+    {
+        $company = auth()->user()->companies()->onlyTrashed()->findOrFail($id);
+        $company->restore();
+
+        return redirect()->route('companies.show', $company->slug)
+            ->with('success', 'Company restored successfully');
+    }
+
+    /**
+     * Permanently delete the specified resource from storage.
+     */
+    public function forceDelete($id)
+    {
+        $company = auth()->user()->companies()->onlyTrashed()->findOrFail($id);
+        $company->forceDelete();
+
+        return redirect()->route('companies.index')
+            ->with('success', 'Company permanently deleted');
     }
 }

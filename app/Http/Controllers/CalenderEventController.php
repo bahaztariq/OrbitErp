@@ -2,65 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCalenderEventRequest;
-use App\Http\Requests\UpdateCalenderEventRequest;
+use App\Http\Requests\CalenderEvent\StoreCalenderEventRequest;
+use App\Http\Requests\CalenderEvent\UpdateCalenderEventRequest;
 use App\Models\CalenderEvent;
+use App\Models\Company;
+use Illuminate\Http\Request;
 
 class CalenderEventController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Company $company)
     {
-        //
+        $events = $company->calenderEvents;
+        return view('calender-events.index', compact('events', 'company'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Company $company)
     {
-        //
+        return view('calender-events.create', compact('company'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCalenderEventRequest $request)
+    public function store(StoreCalenderEventRequest $request, Company $company)
     {
-        //
+        $event = $company->calenderEvents()->create($request->validated());
+        return redirect()->route('calender-events.index', $company->slug)
+            ->with('success', 'Event created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(CalenderEvent $calenderEvent)
+    public function show(Company $company, CalenderEvent $calenderEvent)
     {
-        //
+        return view('calender-events.show', compact('calenderEvent', 'company'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CalenderEvent $calenderEvent)
+    public function edit(Company $company, CalenderEvent $calenderEvent)
     {
-        //
+        return view('calender-events.edit', compact('calenderEvent', 'company'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCalenderEventRequest $request, CalenderEvent $calenderEvent)
+    public function update(UpdateCalenderEventRequest $request, Company $company, CalenderEvent $calenderEvent)
     {
-        //
+        $calenderEvent->update($request->validated());
+        return redirect()->route('calender-events.index', $company->slug)
+            ->with('success', 'Event updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(CalenderEvent $calenderEvent)
+    public function destroy(Company $company, CalenderEvent $calenderEvent)
     {
-        //
+        $calenderEvent->delete();
+        return redirect()->route('calender-events.index', $company->slug)
+            ->with('success', 'Event deleted successfully');
+    }
+
+    public function restore(Company $company, $id)
+    {
+        $event = $company->calenderEvents()->onlyTrashed()->findOrFail($id);
+        $event->restore();
+        return redirect()->route('calender-events.index', $company->slug)
+            ->with('success', 'Event restored successfully');
+    }
+
+    public function forceDelete(Company $company, $id)
+    {
+        $event = $company->calenderEvents()->onlyTrashed()->findOrFail($id);
+        $event->forceDelete();
+        return redirect()->route('calender-events.index', $company->slug)
+            ->with('success', 'Event permanently deleted');
     }
 }

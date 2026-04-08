@@ -2,65 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreClientRequest;
-use App\Http\Requests\UpdateClientRequest;
+use App\Http\Requests\Client\StoreClientRequest;
+use App\Http\Requests\Client\UpdateClientRequest;
 use App\Models\Client;
+use App\Models\Company;
+use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Company $company)
     {
-        //
+        $clients = $company->clients;
+        return view('clients.index', compact('clients', 'company'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Company $company)
     {
-        //
+        return view('clients.create', compact('company'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreClientRequest $request)
+    public function store(StoreClientRequest $request, Company $company)
     {
-        //
+        $client = $company->clients()->create($request->validated());
+        return redirect()->route('clients.index', $company->slug)
+            ->with('success', 'Client created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Client $client)
+    public function show(Company $company, Client $client)
     {
-        //
+        return view('clients.show', compact('client', 'company'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Client $client)
+    public function edit(Company $company, Client $client)
     {
-        //
+        return view('clients.edit', compact('client', 'company'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateClientRequest $request, Client $client)
+    public function update(UpdateClientRequest $request, Company $company, Client $client)
     {
-        //
+        $client->update($request->validated());
+        return redirect()->route('clients.index', $company->slug)
+            ->with('success', 'Client updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Client $client)
+    public function destroy(Company $company, Client $client)
     {
-        //
+        $client->delete();
+        return redirect()->route('clients.index', $company->slug)
+            ->with('success', 'Client deleted successfully');
+    }
+
+    public function restore(Company $company, $id)
+    {
+        $client = $company->clients()->onlyTrashed()->findOrFail($id);
+        $client->restore();
+        return redirect()->route('clients.index', $company->slug)
+            ->with('success', 'Client restored successfully');
+    }
+
+    public function forceDelete(Company $company, $id)
+    {
+        $client = $company->clients()->onlyTrashed()->findOrFail($id);
+        $client->forceDelete();
+        return redirect()->route('clients.index', $company->slug)
+            ->with('success', 'Client permanently deleted');
     }
 }

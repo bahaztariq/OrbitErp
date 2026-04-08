@@ -2,65 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreSupplierRequest;
-use App\Http\Requests\UpdateSupplierRequest;
+use App\Http\Requests\Supplier\StoreSupplierRequest;
+use App\Http\Requests\Supplier\UpdateSupplierRequest;
 use App\Models\Supplier;
+use App\Models\Company;
+use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Company $company)
     {
-        //
+        $suppliers = $company->suppliers;
+        return view('suppliers.index', compact('suppliers', 'company'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Company $company)
     {
-        //
+        return view('suppliers.create', compact('company'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreSupplierRequest $request)
+    public function store(StoreSupplierRequest $request, Company $company)
     {
-        //
+        $supplier = $company->suppliers()->create($request->validated());
+        return redirect()->route('suppliers.index', $company->slug)
+            ->with('success', 'Supplier created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Supplier $supplier)
+    public function show(Company $company, Supplier $supplier)
     {
-        //
+        return view('suppliers.show', compact('supplier', 'company'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Supplier $supplier)
+    public function edit(Company $company, Supplier $supplier)
     {
-        //
+        return view('suppliers.edit', compact('supplier', 'company'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateSupplierRequest $request, Supplier $supplier)
+    public function update(UpdateSupplierRequest $request, Company $company, Supplier $supplier)
     {
-        //
+        $supplier->update($request->validated());
+        return redirect()->route('suppliers.index', $company->slug)
+            ->with('success', 'Supplier updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Supplier $supplier)
+    public function destroy(Company $company, Supplier $supplier)
     {
-        //
+        $supplier->delete();
+        return redirect()->route('suppliers.index', $company->slug)
+            ->with('success', 'Supplier deleted successfully');
+    }
+
+    public function restore(Company $company, $id)
+    {
+        $supplier = $company->suppliers()->onlyTrashed()->findOrFail($id);
+        $supplier->restore();
+        return redirect()->route('suppliers.index', $company->slug)
+            ->with('success', 'Supplier restored successfully');
+    }
+
+    public function forceDelete(Company $company, $id)
+    {
+        $supplier = $company->suppliers()->onlyTrashed()->findOrFail($id);
+        $supplier->forceDelete();
+        return redirect()->route('suppliers.index', $company->slug)
+            ->with('success', 'Supplier permanently deleted');
     }
 }

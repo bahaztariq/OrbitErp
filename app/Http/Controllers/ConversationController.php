@@ -2,65 +2,86 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreConversationRequest;
-use App\Http\Requests\UpdateConversationRequest;
+use App\Http\Requests\Conversation\StoreConversationRequest;
+use App\Http\Requests\Conversation\UpdateConversationRequest;
 use App\Models\Conversation;
+use App\Models\ConversationParticipant;
+use App\Models\Company;
+use Illuminate\Http\Request;
 
 class ConversationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Company $company)
     {
-        //
+        $conversations = $company->conversations;
+        return view('conversations.index', compact('conversations', 'company'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Company $company)
     {
-        //
+        return view('conversations.create', compact('company'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreConversationRequest $request)
+    public function store(StoreConversationRequest $request, Company $company)
     {
-        //
+        $conversation = $company->conversations()->create($request->validated());
+
+        ConversationParticipant::create([
+            'conversation_id' => $conversation->id,
+            'user_id' => auth()->id(),
+        ]);
+
+        if ($request->has('user_ids')) {
+            foreach ($request->user_ids as $user_id) {
+                ConversationParticipant::create([
+                    'conversation_id' => $conversation->id,
+                    'user_id' => $user_id,
+                ]);
+            }
+        }
+
+        return redirect()->route('conversations.show', [$company->slug, $conversation->id])
+            ->with('success', 'Conversation created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Conversation $conversation)
+    public function show(Company $company, Conversation $conversation)
     {
-        //
+        $conversation->load('messages', 'users');
+        return view('conversations.show', compact('conversation', 'company'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Conversation $conversation)
+    public function edit(Company $company, Conversation $conversation)
     {
-        //
+        return view('conversations.edit', compact('conversation', 'company'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateConversationRequest $request, Conversation $conversation)
+    public function update(UpdateConversationRequest $request, Company $company, Conversation $conversation)
     {
-        //
+        $conversation->update($request->validated());
+        return redirect()->route('conversations.show', [$company->slug, $conversation->id])
+            ->with('success', 'Conversation updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Conversation $conversation)
+    public function destroy(Company $company, Conversation $conversation)
     {
-        //
+        $conversation->delete();
+        return redirect()->route('conversations.index', $company->slug)
+            ->with('success', 'Conversation deleted successfully');
+    }
+
+    public function restore(Company $company, $id)
+    {
+        $conversation = $company->conversations()->onlyTrashed()->findOrFail($id);
+        $conversation->restore();
+        return redirect()->route('conversations.show', [$company->slug, $conversation->id])
+            ->with('success', 'Conversation restored successfully');
+    }
+
+    public function forceDelete(Company $company, $id)
+    {
+        $conversation = $company->conversations()->onlyTrashed()->findOrFail($id);
+        $conversation->forceDelete();
+        return redirect()->route('conversations.index', $company->slug)
+            ->with('success', 'Conversation permanently deleted');
     }
 }

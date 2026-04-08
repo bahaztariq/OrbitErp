@@ -2,65 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreInvoiceRequest;
-use App\Http\Requests\UpdateInvoiceRequest;
+use App\Http\Requests\Invoice\StoreInvoiceRequest;
+use App\Http\Requests\Invoice\UpdateInvoiceRequest;
 use App\Models\Invoice;
+use App\Models\Company;
+use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Company $company)
     {
-        //
+        $invoices = $company->invoices;
+        return view('invoices.index', compact('invoices', 'company'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Company $company)
     {
-        //
+        return view('invoices.create', compact('company'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreInvoiceRequest $request)
+    public function store(StoreInvoiceRequest $request, Company $company)
     {
-        //
+        $invoice = $company->invoices()->create($request->validated());
+        return redirect()->route('invoices.show', [$company->slug, $invoice->id])
+            ->with('success', 'Invoice created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Invoice $invoice)
+    public function show(Company $company, Invoice $invoice)
     {
-        //
+        return view('invoices.show', compact('invoice', 'company'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Invoice $invoice)
+    public function edit(Company $company, Invoice $invoice)
     {
-        //
+        return view('invoices.edit', compact('invoice', 'company'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateInvoiceRequest $request, Invoice $invoice)
+    public function update(UpdateInvoiceRequest $request, Company $company, Invoice $invoice)
     {
-        //
+        $invoice->update($request->validated());
+        return redirect()->route('invoices.show', [$company->slug, $invoice->id])
+            ->with('success', 'Invoice updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Invoice $invoice)
+    public function destroy(Company $company, Invoice $invoice)
     {
-        //
+        $invoice->delete();
+        return redirect()->route('invoices.index', $company->slug)
+            ->with('success', 'Invoice deleted successfully');
+    }
+
+    public function restore(Company $company, $id)
+    {
+        $invoice = $company->invoices()->onlyTrashed()->findOrFail($id);
+        $invoice->restore();
+        return redirect()->route('invoices.show', [$company->slug, $invoice->id])
+            ->with('success', 'Invoice restored successfully');
+    }
+
+    public function forceDelete(Company $company, $id)
+    {
+        $invoice = $company->invoices()->onlyTrashed()->findOrFail($id);
+        $invoice->forceDelete();
+        return redirect()->route('invoices.index', $company->slug)
+            ->with('success', 'Invoice permanently deleted');
     }
 }

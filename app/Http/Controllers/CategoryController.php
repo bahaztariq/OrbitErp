@@ -2,65 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Requests\Category\StoreCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Models\Category;
+use App\Models\Company;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Company $company)
     {
-        //
+        $categories = $company->categories;
+        return view('categories.index', compact('categories', 'company'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Company $company)
     {
-        //
+        return view('categories.create', compact('company'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCategoryRequest $request)
+    public function store(StoreCategoryRequest $request, Company $company)
     {
-        //
+        $category = $company->categories()->create($request->validated());
+        return redirect()->route('categories.index', $company->slug)
+            ->with('success', 'Category created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Category $category)
+    public function show(Company $company, Category $category)
     {
-        //
+        return view('categories.show', compact('category', 'company'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Category $category)
+    public function edit(Company $company, Category $category)
     {
-        //
+        return view('categories.edit', compact('category', 'company'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Company $company, Category $category)
     {
-        //
+        $category->update($request->validated());
+        return redirect()->route('categories.index', $company->slug)
+            ->with('success', 'Category updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Category $category)
+    public function destroy(Company $company, Category $category)
     {
-        //
+        $category->delete();
+        return redirect()->route('categories.index', $company->slug)
+            ->with('success', 'Category deleted successfully');
+    }
+
+    public function restore(Company $company, $id)
+    {
+        $category = $company->categories()->onlyTrashed()->findOrFail($id);
+        $category->restore();
+        return redirect()->route('categories.index', $company->slug)
+            ->with('success', 'Category restored successfully');
+    }
+
+    public function forceDelete(Company $company, $id)
+    {
+        $category = $company->categories()->onlyTrashed()->findOrFail($id);
+        $category->forceDelete();
+        return redirect()->route('categories.index', $company->slug)
+            ->with('success', 'Category permanently deleted');
     }
 }

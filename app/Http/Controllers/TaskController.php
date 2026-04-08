@@ -2,65 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreTaskRequest;
-use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Requests\Task\StoreTaskRequest;
+use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Models\Task;
+use App\Models\Company;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Company $company)
     {
-        //
+        $tasks = $company->tasks;
+        return view('tasks.index', compact('tasks', 'company'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Company $company)
     {
-        //
+        return view('tasks.create', compact('company'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreTaskRequest $request)
+    public function store(StoreTaskRequest $request, Company $company)
     {
-        //
+        $task = $company->tasks()->create($request->validated());
+        return redirect()->route('tasks.index', $company->slug)
+            ->with('success', 'Task created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Task $task)
+    public function show(Company $company, Task $task)
     {
-        //
+        return view('tasks.show', compact('task', 'company'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
+    public function edit(Company $company, Task $task)
     {
-        //
+        return view('tasks.edit', compact('task', 'company'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateTaskRequest $request, Task $task)
+    public function update(UpdateTaskRequest $request, Company $company, Task $task)
     {
-        //
+        $task->update($request->validated());
+        return redirect()->route('tasks.index', $company->slug)
+            ->with('success', 'Task updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Task $task)
+    public function destroy(Company $company, Task $task)
     {
-        //
+        $task->delete();
+        return redirect()->route('tasks.index', $company->slug)
+            ->with('success', 'Task deleted successfully');
+    }
+
+    public function restore(Company $company, $id)
+    {
+        $task = $company->tasks()->onlyTrashed()->findOrFail($id);
+        $task->restore();
+        return redirect()->route('tasks.index', $company->slug)
+            ->with('success', 'Task restored successfully');
+    }
+
+    public function forceDelete(Company $company, $id)
+    {
+        $task = $company->tasks()->onlyTrashed()->findOrFail($id);
+        $task->forceDelete();
+        return redirect()->route('tasks.index', $company->slug)
+            ->with('success', 'Task permanently deleted');
     }
 }
