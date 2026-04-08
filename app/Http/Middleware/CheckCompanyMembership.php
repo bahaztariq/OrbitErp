@@ -20,16 +20,12 @@ class CheckCompanyMembership
 
         if ($company instanceof Company) {
             if (!$company->isMember(auth()->id())) {
-                return response()->json([
-                    'message' => 'You are not authorized to access this company',
-                ], 403);
+                abort(403, 'You are not authorized to access this company');
             }
         } elseif (is_string($company)) {
             $companyModel = Company::where('slug', $company)->first();
             if ($companyModel && !$companyModel->isMember(auth()->id())) {
-                return response()->json([
-                    'message' => 'You are not authorized to access this company',
-                ], 403);
+                abort(403, 'You are not authorized to access this company');
             }
         }
 
