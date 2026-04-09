@@ -16,6 +16,7 @@ class ClientController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Client::class);
         $clients = $company->clients;
         return response()->json([
             'message' => 'Clients retrieved successfully',
@@ -28,6 +29,7 @@ class ClientController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Client::class);
         //
     }
 
@@ -36,6 +38,7 @@ class ClientController extends Controller
      */
     public function store(StoreClientRequest $request, Company $company)
     {
+        $this->authorize('create', Client::class);
         $client = $company->clients()->create($request->validated());
 
         return response()->json([
@@ -49,6 +52,7 @@ class ClientController extends Controller
      */
     public function show(Company $company, Client $client)
     {
+        $this->authorize('view', $client);
         return response()->json([
             'message' => 'Client retrieved successfully',
             'data' => $client
@@ -60,6 +64,7 @@ class ClientController extends Controller
      */
     public function destroy(Company $company, Client $client)
     {
+        $this->authorize('delete', $client);
         $client->delete();
 
         return response()->json([
@@ -73,6 +78,7 @@ class ClientController extends Controller
     public function restore(Company $company, $id)
     {
         $client = $company->clients()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $client);
         $client->restore();
 
         return response()->json([
@@ -87,6 +93,7 @@ class ClientController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $client = $company->clients()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $client);
         $client->forceDelete();
 
         return response()->json([

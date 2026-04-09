@@ -15,6 +15,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Company::class);
         $companies = auth()->user()->companies;
         return response()->json([
             'message' => 'Companies retrieved successfully',
@@ -27,6 +28,7 @@ class CompanyController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Company::class);
         
     }
 
@@ -35,6 +37,7 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request)
     {
+        $this->authorize('create', Company::class);
 
         $company = $request->user()->companies()->create($request->validated());
 
@@ -49,6 +52,7 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
+        $this->authorize('view', $company);
         return response()->json([
             'message' => 'Company retrieved successfully',
             'data' => $company
@@ -60,6 +64,7 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
+        $this->authorize('view', $company);
         //
     }
 
@@ -68,6 +73,7 @@ class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request, Company $company)
     {
+        $this->authorize('update', $company);
         $company->update($request->validated());
 
         return response()->json([
@@ -81,6 +87,7 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
+        $this->authorize('delete', $company);
         $company->delete();
         return response()->json([
             'message' => 'Company deleted successfully',
@@ -93,6 +100,7 @@ class CompanyController extends Controller
     public function restore($id)
     {
         $company = auth()->user()->companies()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $company);
         $company->restore();
 
         return response()->json([
@@ -107,6 +115,7 @@ class CompanyController extends Controller
     public function forceDelete($id)
     {
         $company = auth()->user()->companies()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $company);
         $company->forceDelete();
 
         return response()->json([

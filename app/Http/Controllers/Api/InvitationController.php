@@ -16,6 +16,7 @@ class InvitationController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Invitation::class);
         $invitations = $company->invitations;
         return response()->json([
             'message' => 'Invitations retrieved successfully',
@@ -28,6 +29,7 @@ class InvitationController extends Controller
      */
     public function store(StoreInvitationRequest $request, Company $company)
     {
+        $this->authorize('create', Invitation::class);
         $invitation = $company->invitations()->create($request->validated());
 
         return response()->json([
@@ -41,6 +43,7 @@ class InvitationController extends Controller
      */
     public function show(Company $company, Invitation $invitation)
     {
+        $this->authorize('view', $invitation);
         return response()->json([
             'message' => 'Invitation retrieved successfully',
             'data' => $invitation
@@ -52,6 +55,7 @@ class InvitationController extends Controller
      */
     public function update(UpdateInvitationRequest $request, Company $company, Invitation $invitation)
     {
+        $this->authorize('update', $invitation);
         $invitation->update($request->validated());
 
         return response()->json([
@@ -65,6 +69,7 @@ class InvitationController extends Controller
      */
     public function destroy(Company $company, Invitation $invitation)
     {
+        $this->authorize('delete', $invitation);
         $invitation->delete();
 
         return response()->json([
@@ -78,6 +83,7 @@ class InvitationController extends Controller
     public function restore(Company $company, $id)
     {
         $invitation = $company->invitations()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $invitation);
         $invitation->restore();
 
         return response()->json([
@@ -92,6 +98,7 @@ class InvitationController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $invitation = $company->invitations()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $invitation);
         $invitation->forceDelete();
 
         return response()->json([

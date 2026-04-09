@@ -16,6 +16,7 @@ class ProductController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Product::class);
         $products = $company->products;
         return response()->json([
             'message' => 'Products retrieved successfully',
@@ -28,6 +29,7 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request, Company $company)
     {
+        $this->authorize('create', Product::class);
         $product = $company->products()->create($request->validated());
 
         return response()->json([
@@ -41,6 +43,7 @@ class ProductController extends Controller
      */
     public function show(Company $company, Product $product)
     {
+        $this->authorize('view', $product);
         return response()->json([
             'message' => 'Product retrieved successfully',
             'data' => $product
@@ -52,6 +55,7 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Company $company, Product $product)
     {
+        $this->authorize('update', $product);
         $product->update($request->validated());
 
         return response()->json([
@@ -65,6 +69,7 @@ class ProductController extends Controller
      */
     public function destroy(Company $company, Product $product)
     {
+        $this->authorize('delete', $product);
         $product->delete();
 
         return response()->json([
@@ -78,6 +83,7 @@ class ProductController extends Controller
     public function restore(Company $company, $id)
     {
         $product = $company->products()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $product);
         $product->restore();
 
         return response()->json([
@@ -92,6 +98,7 @@ class ProductController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $product = $company->products()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $product);
         $product->forceDelete();
 
         return response()->json([

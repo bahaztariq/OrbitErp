@@ -16,6 +16,7 @@ class InvoiceController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Invoice::class);
         $invoices = $company->invoices;
         return response()->json([
             'message' => 'Invoices retrieved successfully',
@@ -28,6 +29,7 @@ class InvoiceController extends Controller
      */
     public function store(StoreInvoiceRequest $request, Company $company)
     {
+        $this->authorize('create', Invoice::class);
         $invoice = $company->invoices()->create($request->validated());
 
         return response()->json([
@@ -41,6 +43,7 @@ class InvoiceController extends Controller
      */
     public function show(Company $company, Invoice $invoice)
     {
+        $this->authorize('view', $invoice);
         return response()->json([
             'message' => 'Invoice retrieved successfully',
             'data' => $invoice
@@ -52,6 +55,7 @@ class InvoiceController extends Controller
      */
     public function update(UpdateInvoiceRequest $request, Company $company, Invoice $invoice)
     {
+        $this->authorize('update', $invoice);
         $invoice->update($request->validated());
 
         return response()->json([
@@ -65,6 +69,7 @@ class InvoiceController extends Controller
      */
     public function destroy(Company $company, Invoice $invoice)
     {
+        $this->authorize('delete', $invoice);
         $invoice->delete();
 
         return response()->json([
@@ -78,6 +83,7 @@ class InvoiceController extends Controller
     public function restore(Company $company, $id)
     {
         $invoice = $company->invoices()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $invoice);
         $invoice->restore();
 
         return response()->json([
@@ -92,6 +98,7 @@ class InvoiceController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $invoice = $company->invoices()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $invoice);
         $invoice->forceDelete();
 
         return response()->json([

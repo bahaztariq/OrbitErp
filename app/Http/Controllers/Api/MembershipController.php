@@ -16,6 +16,7 @@ class MembershipController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Membership::class);
         $memberships = $company->memberships;
         return response()->json([
             'message' => 'Memberships retrieved successfully',
@@ -28,6 +29,7 @@ class MembershipController extends Controller
      */
     public function store(StoreMembershipRequest $request, Company $company)
     {
+        $this->authorize('create', Membership::class);
         $membership = $company->memberships()->create($request->validated());
 
         return response()->json([
@@ -41,6 +43,7 @@ class MembershipController extends Controller
      */
     public function show(Company $company, Membership $membership)
     {
+        $this->authorize('view', $membership);
         return response()->json([
             'message' => 'Membership retrieved successfully',
             'data' => $membership
@@ -52,6 +55,7 @@ class MembershipController extends Controller
      */
     public function update(UpdateMembershipRequest $request, Company $company, Membership $membership)
     {
+        $this->authorize('update', $membership);
         $membership->update($request->validated());
 
         return response()->json([
@@ -65,6 +69,7 @@ class MembershipController extends Controller
      */
     public function destroy(Company $company, Membership $membership)
     {
+        $this->authorize('delete', $membership);
         $membership->delete();
 
         return response()->json([
@@ -78,6 +83,7 @@ class MembershipController extends Controller
     public function restore(Company $company, $id)
     {
         $membership = $company->memberships()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $membership);
         $membership->restore();
 
         return response()->json([
@@ -92,6 +98,7 @@ class MembershipController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $membership = $company->memberships()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $membership);
         $membership->forceDelete();
 
         return response()->json([

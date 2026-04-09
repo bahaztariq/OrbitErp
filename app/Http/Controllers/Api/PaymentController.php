@@ -16,6 +16,7 @@ class PaymentController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Payment::class);
         $payments = $company->payments;
         return response()->json([
             'message' => 'Payments retrieved successfully',
@@ -28,6 +29,7 @@ class PaymentController extends Controller
      */
     public function store(StorePaymentRequest $request, Company $company)
     {
+        $this->authorize('create', Payment::class);
         $payment = $company->payments()->create($request->validated());
 
         return response()->json([
@@ -41,6 +43,7 @@ class PaymentController extends Controller
      */
     public function show(Company $company, Payment $payment)
     {
+        $this->authorize('view', $payment);
         return response()->json([
             'message' => 'Payment retrieved successfully',
             'data' => $payment
@@ -52,6 +55,7 @@ class PaymentController extends Controller
      */
     public function update(UpdatePaymentRequest $request, Company $company, Payment $payment)
     {
+        $this->authorize('update', $payment);
         $payment->update($request->validated());
 
         return response()->json([
@@ -65,6 +69,7 @@ class PaymentController extends Controller
      */
     public function destroy(Company $company, Payment $payment)
     {
+        $this->authorize('delete', $payment);
         $payment->delete();
 
         return response()->json([
@@ -78,6 +83,7 @@ class PaymentController extends Controller
     public function restore(Company $company, $id)
     {
         $payment = $company->payments()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $payment);
         $payment->restore();
 
         return response()->json([
@@ -92,6 +98,7 @@ class PaymentController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $payment = $company->payments()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $payment);
         $payment->forceDelete();
 
         return response()->json([

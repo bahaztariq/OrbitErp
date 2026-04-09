@@ -12,17 +12,20 @@ class ClientController extends Controller
 {
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Client::class);
         $clients = $company->clients;
         return view('clients.index', compact('clients', 'company'));
     }
 
     public function create(Company $company)
     {
+        $this->authorize('create', Client::class);
         return view('clients.create', compact('company'));
     }
 
     public function store(StoreClientRequest $request, Company $company)
     {
+        $this->authorize('create', Client::class);
         $client = $company->clients()->create($request->validated());
         return redirect()->route('clients.index', $company->slug)
             ->with('success', 'Client created successfully');
@@ -30,16 +33,19 @@ class ClientController extends Controller
 
     public function show(Company $company, Client $client)
     {
+        $this->authorize('view', $client);
         return view('clients.show', compact('client', 'company'));
     }
 
     public function edit(Company $company, Client $client)
     {
+        $this->authorize('view', $client);
         return view('clients.edit', compact('client', 'company'));
     }
 
     public function update(UpdateClientRequest $request, Company $company, Client $client)
     {
+        $this->authorize('update', $client);
         $client->update($request->validated());
         return redirect()->route('clients.index', $company->slug)
             ->with('success', 'Client updated successfully');
@@ -47,6 +53,7 @@ class ClientController extends Controller
 
     public function destroy(Company $company, Client $client)
     {
+        $this->authorize('delete', $client);
         $client->delete();
         return redirect()->route('clients.index', $company->slug)
             ->with('success', 'Client deleted successfully');
@@ -55,6 +62,7 @@ class ClientController extends Controller
     public function restore(Company $company, $id)
     {
         $client = $company->clients()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $client);
         $client->restore();
         return redirect()->route('clients.index', $company->slug)
             ->with('success', 'Client restored successfully');
@@ -63,6 +71,7 @@ class ClientController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $client = $company->clients()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $client);
         $client->forceDelete();
         return redirect()->route('clients.index', $company->slug)
             ->with('success', 'Client permanently deleted');

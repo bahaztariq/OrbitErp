@@ -17,6 +17,7 @@ class CalenderEventController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', CalenderEvent::class);
         $calender = $company->calenderEvents;
         
         return response()->json([
@@ -32,6 +33,7 @@ class CalenderEventController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', CalenderEvent::class);
         //
     }
 
@@ -40,6 +42,7 @@ class CalenderEventController extends Controller
      */
     public function store(StoreCalenderEventRequest $request, Company $company)
     {
+        $this->authorize('create', CalenderEvent::class);
         $event = $company->calenderEvents()->create($request->validated());
 
         return response()->json([
@@ -53,6 +56,7 @@ class CalenderEventController extends Controller
      */
     public function show(Company $company, CalenderEvent $calenderEvent)
     {
+        $this->authorize('view', $calenderEvent);
         return response()->json([
             'message' => 'Event retrieved successfully',
             'data' => $calenderEvent
@@ -64,6 +68,7 @@ class CalenderEventController extends Controller
      */
     public function update(UpdateCalenderEventRequest $request, Company $company, CalenderEvent $calenderEvent)
     {
+        $this->authorize('update', $calenderEvent);
         $calenderEvent->update($request->validated());
 
         return response()->json([
@@ -77,6 +82,7 @@ class CalenderEventController extends Controller
      */
     public function destroy(Company $company, CalenderEvent $calenderEvent)
     {
+        $this->authorize('delete', $calenderEvent);
         $calenderEvent->delete();
         return response()->json([
             'message' => 'Event deleted successfully',
@@ -89,6 +95,7 @@ class CalenderEventController extends Controller
     public function restore(Company $company, $id)
     {
         $event = $company->calenderEvents()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $event);
         $event->restore();
 
         return response()->json([
@@ -103,6 +110,7 @@ class CalenderEventController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $event = $company->calenderEvents()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $event);
         $event->forceDelete();
 
         return response()->json([

@@ -19,6 +19,8 @@ class TrashController extends Controller
 {
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Company::class);
+
         $trashData = [
             'clients' => Client::onlyTrashed()->where('company_id', $company->id)->get(),
             'products' => Product::onlyTrashed()->where('company_id', $company->id)->get(),
@@ -39,7 +41,9 @@ class TrashController extends Controller
 
     public function showTrash()
     {
+        $this->authorize('viewAny', Company::class);
         $companies = auth()->user()->companies()->onlyTrashed()->get();
+
         return view('trash.companies', compact('companies'));
     }
 }

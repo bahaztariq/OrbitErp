@@ -13,7 +13,7 @@ class InvitationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasPermission('view-any invitations');
     }
 
     /**
@@ -21,7 +21,7 @@ class InvitationPolicy
      */
     public function view(User $user, Invitation $invitation): bool
     {
-        return false;
+        return $user->hasPermission('view invitations');
     }
 
     /**
@@ -29,7 +29,7 @@ class InvitationPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasPermission('create invitations');
     }
 
     /**
@@ -37,7 +37,7 @@ class InvitationPolicy
      */
     public function update(User $user, Invitation $invitation): bool
     {
-        return false;
+        return $user->hasPermission('update invitations');
     }
 
     /**
@@ -45,7 +45,7 @@ class InvitationPolicy
      */
     public function delete(User $user, Invitation $invitation): bool
     {
-        return false;
+        return $user->hasPermission('delete invitations');
     }
 
     /**
@@ -53,7 +53,7 @@ class InvitationPolicy
      */
     public function restore(User $user, Invitation $invitation): bool
     {
-        return false;
+        return $user->hasPermission('restore invitations');
     }
 
     /**
@@ -61,6 +61,6 @@ class InvitationPolicy
      */
     public function forceDelete(User $user, Invitation $invitation): bool
     {
-        return false;
+        return $user->hasPermission('force-delete invitations');
     }
 }

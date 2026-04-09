@@ -17,6 +17,7 @@ class MessageController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Message::class);
         $messages = Message::whereHas('conversation', function ($query) use ($company) {
             $query->where('company_id', $company->id);
         })->get();
@@ -32,6 +33,7 @@ class MessageController extends Controller
      */
     public function store(StoreMessageRequest $request, Company $company)
     {
+        $this->authorize('create', Message::class);
         // Ensure the conversation belongs to the company
         $conversation = $company->conversations()->findOrFail($request->conversation_id);
         
@@ -50,6 +52,7 @@ class MessageController extends Controller
      */
     public function show(Company $company, Message $message)
     {
+        $this->authorize('view', $message);
         if ($message->conversation->company_id !== $company->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -65,6 +68,7 @@ class MessageController extends Controller
      */
     public function update(UpdateMessageRequest $request, Company $company, Message $message)
     {
+        $this->authorize('update', $message);
         if ($message->conversation->company_id !== $company->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -82,6 +86,7 @@ class MessageController extends Controller
      */
     public function destroy(Company $company, Message $message)
     {
+        $this->authorize('delete', $message);
         if ($message->conversation->company_id !== $company->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }

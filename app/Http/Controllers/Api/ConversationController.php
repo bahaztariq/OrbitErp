@@ -17,6 +17,7 @@ class ConversationController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Conversation::class);
         return response()->json([
             'message' => 'Conversations retrieved successfully',
             'data' => $company->conversations
@@ -28,6 +29,7 @@ class ConversationController extends Controller
      */
     public function store(StoreConversationRequest $request, Company $company)
     {
+        $this->authorize('create', Conversation::class);
         $conversation = $company->conversations()->create($request->validated());
 
         ConversationParticipant::create([
@@ -55,6 +57,7 @@ class ConversationController extends Controller
      */
     public function show(Company $company, Conversation $conversation)
     {
+        $this->authorize('view', $conversation);
         return response()->json([
             'message' => 'Conversation retrieved successfully',
             'data' => $conversation->load('messages', 'users')
@@ -66,6 +69,7 @@ class ConversationController extends Controller
      */
     public function update(UpdateConversationRequest $request, Company $company, Conversation $conversation)
     {
+        $this->authorize('update', $conversation);
         $conversation->update($request->validated());
 
         return response()->json([
@@ -79,6 +83,7 @@ class ConversationController extends Controller
      */
     public function destroy(Company $company, Conversation $conversation)
     {
+        $this->authorize('delete', $conversation);
         $conversation->delete();
 
         return response()->json([
@@ -92,6 +97,7 @@ class ConversationController extends Controller
     public function restore(Company $company, $id)
     {
         $conversation = $company->conversations()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $conversation);
         $conversation->restore();
 
         return response()->json([
@@ -106,6 +112,7 @@ class ConversationController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $conversation = $company->conversations()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $conversation);
         $conversation->forceDelete();
 
         return response()->json([

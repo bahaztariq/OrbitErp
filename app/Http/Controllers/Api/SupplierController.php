@@ -16,6 +16,7 @@ class SupplierController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Supplier::class);
         $suppliers = $company->suppliers;
         return response()->json([
             'message' => 'Suppliers retrieved successfully',
@@ -28,6 +29,7 @@ class SupplierController extends Controller
      */
     public function store(StoreSupplierRequest $request, Company $company)
     {
+        $this->authorize('create', Supplier::class);
         $supplier = $company->suppliers()->create($request->validated());
 
         return response()->json([
@@ -41,6 +43,7 @@ class SupplierController extends Controller
      */
     public function show(Company $company, Supplier $supplier)
     {
+        $this->authorize('view', $supplier);
         return response()->json([
             'message' => 'Supplier retrieved successfully',
             'data' => $supplier
@@ -52,6 +55,7 @@ class SupplierController extends Controller
      */
     public function update(UpdateSupplierRequest $request, Company $company, Supplier $supplier)
     {
+        $this->authorize('update', $supplier);
         $supplier->update($request->validated());
 
         return response()->json([
@@ -65,6 +69,7 @@ class SupplierController extends Controller
      */
     public function destroy(Company $company, Supplier $supplier)
     {
+        $this->authorize('delete', $supplier);
         $supplier->delete();
 
         return response()->json([
@@ -78,6 +83,7 @@ class SupplierController extends Controller
     public function restore(Company $company, $id)
     {
         $supplier = $company->suppliers()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $supplier);
         $supplier->restore();
 
         return response()->json([
@@ -92,6 +98,7 @@ class SupplierController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $supplier = $company->suppliers()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $supplier);
         $supplier->forceDelete();
 
         return response()->json([

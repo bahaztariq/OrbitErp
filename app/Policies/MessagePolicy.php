@@ -13,7 +13,7 @@ class MessagePolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasPermission('view-any messages');
     }
 
     /**
@@ -21,7 +21,7 @@ class MessagePolicy
      */
     public function view(User $user, Message $message): bool
     {
-        return false;
+        return $user->hasPermission('view messages');
     }
 
     /**
@@ -29,7 +29,7 @@ class MessagePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasPermission('create messages');
     }
 
     /**
@@ -37,7 +37,7 @@ class MessagePolicy
      */
     public function update(User $user, Message $message): bool
     {
-        return false;
+        return $user->hasPermission('update messages');
     }
 
     /**
@@ -45,7 +45,7 @@ class MessagePolicy
      */
     public function delete(User $user, Message $message): bool
     {
-        return false;
+        return $user->hasPermission('delete messages');
     }
 
     /**
@@ -53,7 +53,7 @@ class MessagePolicy
      */
     public function restore(User $user, Message $message): bool
     {
-        return false;
+        return $user->hasPermission('restore messages');
     }
 
     /**
@@ -61,6 +61,6 @@ class MessagePolicy
      */
     public function forceDelete(User $user, Message $message): bool
     {
-        return false;
+        return $user->hasPermission('force-delete messages');
     }
 }

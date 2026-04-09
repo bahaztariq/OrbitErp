@@ -16,6 +16,7 @@ class RoleController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Role::class);
         $roles = $company->roles;
         return response()->json([
             'message' => 'Roles retrieved successfully',
@@ -28,6 +29,7 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request, Company $company)
     {
+        $this->authorize('create', Role::class);
         $role = $company->roles()->create($request->validated());
 
         return response()->json([
@@ -41,6 +43,7 @@ class RoleController extends Controller
      */
     public function show(Company $company, Role $role)
     {
+        $this->authorize('view', $role);
         return response()->json([
             'message' => 'Role retrieved successfully',
             'data' => $role
@@ -52,6 +55,7 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Company $company, Role $role)
     {
+        $this->authorize('update', $role);
         $role->update($request->validated());
 
         return response()->json([
@@ -65,6 +69,7 @@ class RoleController extends Controller
      */
     public function destroy(Company $company, Role $role)
     {
+        $this->authorize('delete', $role);
         $role->delete();
 
         return response()->json([
@@ -78,6 +83,7 @@ class RoleController extends Controller
     public function restore(Company $company, $id)
     {
         $role = $company->roles()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $role);
         $role->restore();
 
         return response()->json([
@@ -92,6 +98,7 @@ class RoleController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $role = $company->roles()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $role);
         $role->forceDelete();
 
         return response()->json([

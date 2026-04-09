@@ -16,6 +16,7 @@ class TaskController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Task::class);
         $tasks = $company->tasks;
         return response()->json([
             'message' => 'Tasks retrieved successfully',
@@ -28,6 +29,7 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request, Company $company)
     {
+        $this->authorize('create', Task::class);
         $task = $company->tasks()->create($request->validated());
 
         return response()->json([
@@ -41,6 +43,7 @@ class TaskController extends Controller
      */
     public function show(Company $company, Task $task)
     {
+        $this->authorize('view', $task);
         return response()->json([
             'message' => 'Task retrieved successfully',
             'data' => $task
@@ -52,6 +55,7 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Company $company, Task $task)
     {
+        $this->authorize('update', $task);
         $task->update($request->validated());
 
         return response()->json([
@@ -65,6 +69,7 @@ class TaskController extends Controller
      */
     public function destroy(Company $company, Task $task)
     {
+        $this->authorize('delete', $task);
         $task->delete();
 
         return response()->json([
@@ -78,6 +83,7 @@ class TaskController extends Controller
     public function restore(Company $company, $id)
     {
         $task = $company->tasks()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $task);
         $task->restore();
 
         return response()->json([
@@ -92,6 +98,7 @@ class TaskController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $task = $company->tasks()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $task);
         $task->forceDelete();
 
         return response()->json([

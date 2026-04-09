@@ -16,6 +16,7 @@ class PermissionController extends Controller
      */
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Permission::class);
         $permissions = $company->permissions;
         return response()->json([
             'message' => 'Permissions retrieved successfully',
@@ -28,6 +29,7 @@ class PermissionController extends Controller
      */
     public function store(StorePermissionRequest $request, Company $company)
     {
+        $this->authorize('create', Permission::class);
         $permission = $company->permissions()->create($request->validated());
 
         return response()->json([
@@ -41,6 +43,7 @@ class PermissionController extends Controller
      */
     public function show(Company $company, Permission $permission)
     {
+        $this->authorize('view', $permission);
         return response()->json([
             'message' => 'Permission retrieved successfully',
             'data' => $permission
@@ -52,6 +55,7 @@ class PermissionController extends Controller
      */
     public function update(UpdatePermissionRequest $request, Company $company, Permission $permission)
     {
+        $this->authorize('update', $permission);
         $permission->update($request->validated());
 
         return response()->json([
@@ -65,6 +69,7 @@ class PermissionController extends Controller
      */
     public function destroy(Company $company, Permission $permission)
     {
+        $this->authorize('delete', $permission);
         $permission->delete();
 
         return response()->json([
@@ -78,6 +83,7 @@ class PermissionController extends Controller
     public function restore(Company $company, $id)
     {
         $permission = $company->permissions()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $permission);
         $permission->restore();
 
         return response()->json([
@@ -92,6 +98,7 @@ class PermissionController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $permission = $company->permissions()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $permission);
         $permission->forceDelete();
 
         return response()->json([

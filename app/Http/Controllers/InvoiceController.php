@@ -12,17 +12,20 @@ class InvoiceController extends Controller
 {
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Invoice::class);
         $invoices = $company->invoices;
         return view('invoices.index', compact('invoices', 'company'));
     }
 
     public function create(Company $company)
     {
+        $this->authorize('create', Invoice::class);
         return view('invoices.create', compact('company'));
     }
 
     public function store(StoreInvoiceRequest $request, Company $company)
     {
+        $this->authorize('create', Invoice::class);
         $invoice = $company->invoices()->create($request->validated());
         return redirect()->route('invoices.show', [$company->slug, $invoice->id])
             ->with('success', 'Invoice created successfully');
@@ -30,16 +33,19 @@ class InvoiceController extends Controller
 
     public function show(Company $company, Invoice $invoice)
     {
+        $this->authorize('view', $invoice);
         return view('invoices.show', compact('invoice', 'company'));
     }
 
     public function edit(Company $company, Invoice $invoice)
     {
+        $this->authorize('view', $invoice);
         return view('invoices.edit', compact('invoice', 'company'));
     }
 
     public function update(UpdateInvoiceRequest $request, Company $company, Invoice $invoice)
     {
+        $this->authorize('update', $invoice);
         $invoice->update($request->validated());
         return redirect()->route('invoices.show', [$company->slug, $invoice->id])
             ->with('success', 'Invoice updated successfully');
@@ -47,6 +53,7 @@ class InvoiceController extends Controller
 
     public function destroy(Company $company, Invoice $invoice)
     {
+        $this->authorize('delete', $invoice);
         $invoice->delete();
         return redirect()->route('invoices.index', $company->slug)
             ->with('success', 'Invoice deleted successfully');
@@ -55,6 +62,7 @@ class InvoiceController extends Controller
     public function restore(Company $company, $id)
     {
         $invoice = $company->invoices()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $invoice);
         $invoice->restore();
         return redirect()->route('invoices.show', [$company->slug, $invoice->id])
             ->with('success', 'Invoice restored successfully');
@@ -63,6 +71,7 @@ class InvoiceController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $invoice = $company->invoices()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $invoice);
         $invoice->forceDelete();
         return redirect()->route('invoices.index', $company->slug)
             ->with('success', 'Invoice permanently deleted');

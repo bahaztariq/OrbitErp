@@ -12,17 +12,20 @@ class CalenderEventController extends Controller
 {
     public function index(Company $company)
     {
+        $this->authorize('viewAny', CalenderEvent::class);
         $events = $company->calenderEvents;
         return view('calender-events.index', compact('events', 'company'));
     }
 
     public function create(Company $company)
     {
+        $this->authorize('create', CalenderEvent::class);
         return view('calender-events.create', compact('company'));
     }
 
     public function store(StoreCalenderEventRequest $request, Company $company)
     {
+        $this->authorize('create', CalenderEvent::class);
         $event = $company->calenderEvents()->create($request->validated());
         return redirect()->route('calender-events.index', $company->slug)
             ->with('success', 'Event created successfully');
@@ -30,16 +33,19 @@ class CalenderEventController extends Controller
 
     public function show(Company $company, CalenderEvent $calenderEvent)
     {
+        $this->authorize('view', $calenderEvent);
         return view('calender-events.show', compact('calenderEvent', 'company'));
     }
 
     public function edit(Company $company, CalenderEvent $calenderEvent)
     {
+        $this->authorize('view', $calenderEvent);
         return view('calender-events.edit', compact('calenderEvent', 'company'));
     }
 
     public function update(UpdateCalenderEventRequest $request, Company $company, CalenderEvent $calenderEvent)
     {
+        $this->authorize('update', $calenderEvent);
         $calenderEvent->update($request->validated());
         return redirect()->route('calender-events.index', $company->slug)
             ->with('success', 'Event updated successfully');
@@ -47,6 +53,7 @@ class CalenderEventController extends Controller
 
     public function destroy(Company $company, CalenderEvent $calenderEvent)
     {
+        $this->authorize('delete', $calenderEvent);
         $calenderEvent->delete();
         return redirect()->route('calender-events.index', $company->slug)
             ->with('success', 'Event deleted successfully');
@@ -55,6 +62,7 @@ class CalenderEventController extends Controller
     public function restore(Company $company, $id)
     {
         $event = $company->calenderEvents()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $event);
         $event->restore();
         return redirect()->route('calender-events.index', $company->slug)
             ->with('success', 'Event restored successfully');
@@ -63,6 +71,7 @@ class CalenderEventController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $event = $company->calenderEvents()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $event);
         $event->forceDelete();
         return redirect()->route('calender-events.index', $company->slug)
             ->with('success', 'Event permanently deleted');

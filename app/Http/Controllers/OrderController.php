@@ -12,17 +12,20 @@ class OrderController extends Controller
 {
     public function index(Company $company)
     {
+        $this->authorize('viewAny', Order::class);
         $orders = $company->orders;
         return view('orders.index', compact('orders', 'company'));
     }
 
     public function create(Company $company)
     {
+        $this->authorize('create', Order::class);
         return view('orders.create', compact('company'));
     }
 
     public function store(StoreOrderRequest $request, Company $company)
     {
+        $this->authorize('create', Order::class);
         $order = $company->orders()->create($request->validated());
         return redirect()->route('orders.show', [$company->slug, $order->id])
             ->with('success', 'Order created successfully');
@@ -30,16 +33,19 @@ class OrderController extends Controller
 
     public function show(Company $company, Order $order)
     {
+        $this->authorize('view', $order);
         return view('orders.show', compact('order', 'company'));
     }
 
     public function edit(Company $company, Order $order)
     {
+        $this->authorize('view', $order);
         return view('orders.edit', compact('order', 'company'));
     }
 
     public function update(UpdateOrderRequest $request, Company $company, Order $order)
     {
+        $this->authorize('update', $order);
         $order->update($request->validated());
         return redirect()->route('orders.show', [$company->slug, $order->id])
             ->with('success', 'Order updated successfully');
@@ -47,6 +53,7 @@ class OrderController extends Controller
 
     public function destroy(Company $company, Order $order)
     {
+        $this->authorize('delete', $order);
         $order->delete();
         return redirect()->route('orders.index', $company->slug)
             ->with('success', 'Order deleted successfully');
@@ -55,6 +62,7 @@ class OrderController extends Controller
     public function restore(Company $company, $id)
     {
         $order = $company->orders()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $order);
         $order->restore();
         return redirect()->route('orders.show', [$company->slug, $order->id])
             ->with('success', 'Order restored successfully');
@@ -63,6 +71,7 @@ class OrderController extends Controller
     public function forceDelete(Company $company, $id)
     {
         $order = $company->orders()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $order);
         $order->forceDelete();
         return redirect()->route('orders.index', $company->slug)
             ->with('success', 'Order permanently deleted');
