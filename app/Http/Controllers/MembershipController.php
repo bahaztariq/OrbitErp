@@ -20,7 +20,10 @@ class MembershipController extends Controller
     public function create(Company $company)
     {
         $this->authorize('create', Membership::class);
-        return view('memberships.create', compact('company'));
+        $users = \App\Models\User::whereDoesntHave('companies', function($q) use ($company) {
+            $q->where('companies.id', $company->id);
+        })->get();
+        return view('memberships.create', compact('company', 'users'));
     }
 
     public function store(StoreMembershipRequest $request, Company $company)
@@ -40,7 +43,8 @@ class MembershipController extends Controller
     public function edit(Company $company, Membership $membership)
     {
         $this->authorize('view', $membership);
-        return view('memberships.edit', compact('membership', 'company'));
+        $users = \App\Models\User::all();
+        return view('memberships.edit', compact('membership', 'company', 'users'));
     }
 
     public function update(UpdateMembershipRequest $request, Company $company, Membership $membership)
