@@ -20,7 +20,9 @@ class TaskController extends Controller
     public function create(Company $company)
     {
         $this->authorize('create', Task::class);
-        return view('tasks.create', compact('company'));
+        $users = $company->users;
+        $tasks = $company->tasks;
+        return view('tasks.create', compact('company', 'users', 'tasks'));
     }
 
     public function store(StoreTaskRequest $request, Company $company)
@@ -40,7 +42,9 @@ class TaskController extends Controller
     public function edit(Company $company, Task $task)
     {
         $this->authorize('view', $task);
-        return view('tasks.edit', compact('task', 'company'));
+        $users = $company->users;
+        $tasks = $company->tasks()->where('id', '!=', $task->id)->get();
+        return view('tasks.edit', compact('task', 'company', 'users', 'tasks'));
     }
 
     public function update(UpdateTaskRequest $request, Company $company, Task $task)

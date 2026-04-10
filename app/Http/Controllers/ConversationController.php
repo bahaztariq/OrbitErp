@@ -21,7 +21,8 @@ class ConversationController extends Controller
     public function create(Company $company)
     {
         $this->authorize('create', Conversation::class);
-        return view('conversations.create', compact('company'));
+        $users = $company->users;
+        return view('conversations.create', compact('company', 'users'));
     }
 
     public function store(StoreConversationRequest $request, Company $company)
@@ -57,7 +58,8 @@ class ConversationController extends Controller
     public function edit(Company $company, Conversation $conversation)
     {
         $this->authorize('view', $conversation);
-        return view('conversations.edit', compact('conversation', 'company'));
+        $users = $company->users;
+        return view('conversations.edit', compact('conversation', 'company', 'users'));
     }
 
     public function update(UpdateConversationRequest $request, Company $company, Conversation $conversation)
