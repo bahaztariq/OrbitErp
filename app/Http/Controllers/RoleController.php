@@ -20,7 +20,8 @@ class RoleController extends Controller
     public function create(Company $company)
     {
         $this->authorize('create', Role::class);
-        return view('roles.create', compact('company'));
+        $permissions = \App\Models\Permission::all();
+        return view('roles.create', compact('company', 'permissions'));
     }
 
     public function store(StoreRoleRequest $request, Company $company)
@@ -40,7 +41,8 @@ class RoleController extends Controller
     public function edit(Company $company, Role $role)
     {
         $this->authorize('view', $role);
-        return view('roles.edit', compact('role', 'company'));
+        $permissions = \App\Models\Permission::all();
+        return view('roles.edit', compact('role', 'company', 'permissions'));
     }
 
     public function update(UpdateRoleRequest $request, Company $company, Role $role)
