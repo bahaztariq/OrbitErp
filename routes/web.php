@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
 
     // Root-level Company routes (for listing and creating companies)
     Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+    Route::get('/companies/create', [CompanyController::class, 'create'])->name('companies.create');
     Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
     Route::get('/companies/trash', [TrashController::class, 'showTrash'])->name('ShowTrash');
 
@@ -43,7 +44,8 @@ Route::middleware('auth')->group(function () {
         
         // Company management
         Route::get('/', [CompanyController::class, 'show'])->name('companies.show');
-        Route::post('/', [CompanyController::class, 'update'])->name('companies.update');
+        Route::get('/edit', [CompanyController::class, 'edit'])->name('companies.edit');
+        Route::match(['post', 'put', 'patch'], '/', [CompanyController::class, 'update'])->name('companies.update');
         Route::delete('/', [CompanyController::class, 'destroy'])->name('companies.destroy');
         Route::post('/restore', [CompanyController::class, 'restore'])->name('companies.restore');
         Route::post('/force-delete', [CompanyController::class, 'forceDelete'])->name('companies.force-delete');
@@ -109,7 +111,7 @@ Route::middleware('auth')->group(function () {
         Route::post('tasks/{task}/restore', [TaskController::class, 'restore'])->name('tasks.restore');
         Route::post('tasks/{task}/force-delete', [TaskController::class, 'forceDelete'])->name('tasks.force-delete');
 
-        Route::get('/trash', [TrashController::class, 'index'])->name('trash');
+        Route::get('/trash', [TrashController::class, 'index'])->name('trash.index');
     });
 });
 
