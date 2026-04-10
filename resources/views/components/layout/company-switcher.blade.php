@@ -31,7 +31,7 @@
 
     <!-- Notion-style Dropdown -->
     <div
-        x-show="open"
+        x-show="open && ($store.sidebar.isExpanded || $store.sidebar.isHovered)"
         @click.away="open = false"
         x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 translate-y-2 scale-95"
