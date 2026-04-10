@@ -20,7 +20,8 @@ class PaymentController extends Controller
     public function create(Company $company)
     {
         $this->authorize('create', Payment::class);
-        return view('payments.create', compact('company'));
+        $invoices = $company->invoices;
+        return view('payments.create', compact('company', 'invoices'));
     }
 
     public function store(StorePaymentRequest $request, Company $company)
@@ -40,7 +41,8 @@ class PaymentController extends Controller
     public function edit(Company $company, Payment $payment)
     {
         $this->authorize('view', $payment);
-        return view('payments.edit', compact('payment', 'company'));
+        $invoices = $company->invoices;
+        return view('payments.edit', compact('payment', 'company', 'invoices'));
     }
 
     public function update(UpdatePaymentRequest $request, Company $company, Payment $payment)
