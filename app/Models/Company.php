@@ -92,6 +92,11 @@ class Company extends Model
         return $this->hasMany(Notification::class);
     }
 
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     public function isMember($userId)
     {
         return $this->users()->where('user_id', $userId)->exists();
