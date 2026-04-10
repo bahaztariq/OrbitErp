@@ -26,7 +26,8 @@ class ProductController extends Controller
     public function create(Company $company)
     {
         $this->authorize('create', Product::class);
-        return view('products.create', compact('company'));
+        $categories = $company->categories;
+        return view('products.create', compact('company', 'categories'));
     }
 
     public function store(StoreProductRequest $request, Company $company)
@@ -41,7 +42,8 @@ class ProductController extends Controller
     public function edit(Company $company, Product $product)
     {
         $this->authorize('view', $product);
-        return view('products.edit', compact('product', 'company'));
+        $categories = $company->categories;
+        return view('products.edit', compact('product', 'company', 'categories'));
     }
 
     public function update(UpdateProductRequest $request, Company $company, Product $product)
