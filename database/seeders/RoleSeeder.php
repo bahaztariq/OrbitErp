@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Role;
+use App\Models\Permission;
+use Illuminate\Support\Str;
 
 class RoleSeeder extends Seeder
 {
@@ -12,21 +15,61 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::insert([
-            ['Admin' , 'admin' , 'this role has all permissions' , true],
-            ['User' , 'user' , 'this role has basic permissions' , true],
-            ['Manager' , 'manager' , 'this role has manager permissions' , true],
-            ['Employee' , 'employee' , 'this role has employee permissions' , true],
-            ['Accountant' , 'accountant' , 'this role has accountant permissions' , true],
-            ['HR' , 'hr' , 'this role has hr permissions' , true],
-            ['Sales' , 'sales' , 'this role has sales permissions' , true],
-            ['Marketing' , 'marketing' , 'this role has marketing permissions' , true],
-            ['Support' , 'support' , 'this role has support permissions' , true],
-            ['Developer' , 'developer' , 'this role has developer permissions' , true],
-            ['Designer' , 'designer' , 'this role has designer permissions' , true],
-            ['Editor' , 'editor' , 'this role has editor permissions' , true],
-            ['Publisher' , 'publisher' , 'this role has publisher permissions' , true],
-            ['Moderator' , 'moderator' , 'this role has moderator permissions' , true]
-        ]);
+        $roles = [
+            'Admin' => ['all'],
+            'Manager' => [
+                'view-any companies', 'view companies', 'update companies',
+                'view-any clients', 'view clients', 'create clients', 'update clients',
+                'view-any products', 'view products', 'create products', 'update products',
+                'view-any categories', 'view categories', 'create categories', 'update categories',
+                'view-any suppliers', 'view suppliers', 'create suppliers', 'update suppliers',
+                'view-any orders', 'view orders', 'create orders', 'update orders',
+                'view-any invoices', 'view invoices', 'create invoices', 'update invoices',
+                'view-any payments', 'view payments', 'create payments', 'update payments',
+                'view-any tasks', 'view tasks', 'create tasks', 'update tasks',
+                'view-any calender-events', 'view calender-events', 'create calender-events', 'update calender-events',
+                'view-any messages', 'view messages', 'create messages',
+                'view-any conversations', 'view conversations', 'create conversations',
+                'view-any invitations', 'view invitations', 'create invitations',
+                'view-any memberships', 'view memberships',
+                'view-any trash', 'view trash', 'restore trash',
+            ],
+            'Sales' => [
+                'view-any clients', 'view clients', 'create clients', 'update clients',
+                'view-any products', 'view products', 'view-any categories', 'view categories',
+                'view-any orders', 'view orders', 'create orders', 'update orders',
+                'view-any invoices', 'view invoices', 'create invoices', 'update invoices',
+                'view-any payments', 'view payments',
+                'view-any tasks', 'view tasks', 'create tasks', 'update tasks',
+            ],
+            'Accountant' => [
+                'view-any invoices', 'view invoices', 'update invoices',
+                'view-any payments', 'view payments', 'create payments', 'update payments',
+                'view-any orders', 'view orders',
+                'view-any companies', 'view companies',
+            ],
+            'User' => [
+                'view-any tasks', 'view tasks', 'create tasks', 'update tasks',
+                'view-any calender-events', 'view calender-events', 'create calender-events', 'update calender-events',
+                'view-any messages', 'view messages', 'create messages',
+                'view-any conversations', 'view conversations',
+            ],
+        ];
+
+        foreach ($roles as $roleName => $perms) {
+            $role = Role::firstOrCreate([
+                'name' => $roleName,
+                'slug' => Str::slug($roleName),
+            ], [
+                'description' => "Standard $roleName role",
+            ]);
+
+            if ($perms === ['all']) {
+                $role->permissions()->sync(Permission::all());
+            } else {
+                $permissionIds = Permission::whereIn('name', $perms)->pluck('id');
+                $role->permissions()->sync($permissionIds);
+            }
+        }
     }
 }

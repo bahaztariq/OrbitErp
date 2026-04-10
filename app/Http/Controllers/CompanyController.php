@@ -46,6 +46,7 @@ class CompanyController extends Controller
     public function show(Company $company)
     {
         $this->authorize('view', $company);
+        $company->loadCount('users');
         return view('companies.show', compact('company'));
     }
 
