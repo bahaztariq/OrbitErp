@@ -20,7 +20,9 @@ class OrderController extends Controller
     public function create(Company $company)
     {
         $this->authorize('create', Order::class);
-        return view('orders.create', compact('company'));
+        $clients = $company->clients;
+        $suppliers = $company->suppliers;
+        return view('orders.create', compact('company', 'clients', 'suppliers'));
     }
 
     public function store(StoreOrderRequest $request, Company $company)
@@ -40,7 +42,9 @@ class OrderController extends Controller
     public function edit(Company $company, Order $order)
     {
         $this->authorize('view', $order);
-        return view('orders.edit', compact('order', 'company'));
+        $clients = $company->clients;
+        $suppliers = $company->suppliers;
+        return view('orders.edit', compact('order', 'company', 'clients', 'suppliers'));
     }
 
     public function update(UpdateOrderRequest $request, Company $company, Order $order)

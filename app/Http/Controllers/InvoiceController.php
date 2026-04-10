@@ -20,7 +20,9 @@ class InvoiceController extends Controller
     public function create(Company $company)
     {
         $this->authorize('create', Invoice::class);
-        return view('invoices.create', compact('company'));
+        $orders = $company->orders;
+        $clients = $company->clients;
+        return view('invoices.create', compact('company', 'orders', 'clients'));
     }
 
     public function store(StoreInvoiceRequest $request, Company $company)
@@ -40,7 +42,9 @@ class InvoiceController extends Controller
     public function edit(Company $company, Invoice $invoice)
     {
         $this->authorize('view', $invoice);
-        return view('invoices.edit', compact('invoice', 'company'));
+        $orders = $company->orders;
+        $clients = $company->clients;
+        return view('invoices.edit', compact('invoice', 'company', 'orders', 'clients'));
     }
 
     public function update(UpdateInvoiceRequest $request, Company $company, Invoice $invoice)
