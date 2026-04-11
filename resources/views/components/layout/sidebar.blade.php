@@ -45,8 +45,8 @@
             <ul class="space-y-0.5">
                 <!-- Dashboard -->
                 <li>
-                    <a href="{{ route('dashboard') }}" 
-                       class="menu-item {{ Request::routeIs('dashboard') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                    <a href="{{ isset($company) ? (is_object($company) ? route('companies.show', $company->slug) : route('companies.show', $company)) : route('companies.index') }}" 
+                       class="menu-item {{ Request::routeIs('companies.show') || Request::routeIs('companies.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
                        :class="{ 'xl:justify-center xl:px-2': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -55,27 +55,9 @@
                     </a>
                 </li>
 
-                <!-- <li class="pt-4 pb-2">
-                    <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" 
-                          class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Main</span>
-                    <hr x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered" class="border-gray-100 mx-2">
-                </li> -->
-
-                <!-- Companies -->
-                <!-- <li>
-                    <a href="{{ route('companies.index') }}" 
-                       class="menu-item {{ Request::routeIs('companies.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
-                       :class="{ 'xl:justify-center xl:px-2': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
-                        <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" class="truncate">My Companies</span>
-                    </a>
-                </li> -->
-
                 @if(isset($company))
                 <!-- Sales Group -->
-                <li class="pt-2 pb-1.5">
+                <li class="pt-1.5 pb-1">
                     <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" 
                           class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Sales</span>
                     <hr x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered" class="border-gray-100 mx-2">
@@ -123,7 +105,7 @@
                 </li>
 
                 <!-- Inventory Group -->
-                <li class="pt-2 pb-1.5">
+                <li class="pt-1.5 pb-1">
                     <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" 
                           class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Inventory</span>
                     <hr x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered" class="border-gray-100 mx-2">
@@ -161,7 +143,7 @@
                 </li>
 
                 <!-- Collaboration Group -->
-                <li class="pt-2 pb-1.5">
+                <li class="pt-1.5 pb-1">
                     <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" 
                           class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Collaboration</span>
                     <hr x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered" class="border-gray-100 mx-2">
@@ -199,7 +181,7 @@
                 </li>
 
                 <!-- Access Control Group -->
-                <li class="pt-2 pb-1.5">
+                <li class="pt-1.5 pb-1">
                     <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" 
                           class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Access Control</span>
                     <hr x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered" class="border-gray-100 mx-2">
@@ -237,12 +219,23 @@
                 </li>
 
                 <!-- System Group -->
-                <li class="pt-4 pb-2">
+                <li class="pt-3 pb-1">
                     <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" 
                           class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">System</span>
                     <hr x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered" class="border-gray-100 mx-2">
                 </li>
                 
+                <li>
+                    <a href="{{ route('companies.info', $company->slug) }}" 
+                       class="menu-item {{ Request::routeIs('companies.info') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                       :class="{ 'xl:justify-center xl:px-2': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" class="truncate">Info</span>
+                    </a>
+                </li>
+
                 <li>
                     <a href="{{ route('trash.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('trash.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
