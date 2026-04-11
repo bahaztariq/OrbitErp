@@ -24,6 +24,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/invitations/accept/{token}', [InvitationController::class, 'accept'])->middleware('signed')->name('invitations.accept');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -65,7 +66,8 @@ Route::middleware('auth')->group(function () {
         Route::post('conversations/{conversation}/restore', [ConversationController::class, 'restore'])->name('conversations.restore');
         Route::post('conversations/{conversation}/force-delete', [ConversationController::class, 'forceDelete'])->name('conversations.force-delete');
 
-        Route::resource('invitations', InvitationController::class);
+        Route::resource('invitations', InvitationController::class)->only(['index', 'create', 'store', 'destroy']);
+        Route::post('invitations/send', [InvitationController::class, 'send'])->name('invitations.send');
         Route::post('invitations/{invitation}/restore', [InvitationController::class, 'restore'])->name('invitations.restore');
         Route::post('invitations/{invitation}/force-delete', [InvitationController::class, 'forceDelete'])->name('invitations.force-delete');
 
