@@ -31,8 +31,8 @@ class AuthenticatedSessionController extends Controller
         if ($token = session('pending_invite_token')) {
             return redirect()->route('invitations.accept', ['token' => $token]);
         }
-
-        return redirect()->intended(route('dashboard', absolute: false));
+      
+        return redirect()->intended(route('companies.index', absolute: false));
     }
 
     /**

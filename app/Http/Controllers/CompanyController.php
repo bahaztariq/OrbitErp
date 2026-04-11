@@ -5,7 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Company\StoreCompanyRequest;
 use App\Http\Requests\Company\UpdateCompanyRequest;
 use App\Models\Company;
+use App\Models\Client;
+use App\Models\Product;
+use App\Models\Invoice;
+use App\Models\Order;
+use App\Services\StatsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
@@ -43,11 +49,36 @@ class CompanyController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Company $company)
+    public function show(Company $company, StatsService $statsService)
+    {
+        $this->authorize('view', $company);
+        
+        $stats = $statsService->getCompanyMetrics($company);
+        $monthlyRevenue = $statsService->getMonthlyRevenue($company);
+        $clientGrowth = $statsService->getClientGrowth($company);
+        $orderStatusDist = $statsService->getOrderStatusDist($company);
+        $invoiceStatusDist = $statsService->getInvoiceStatusDist($company);
+
+        $company->loadCount('users');
+        
+        return view('companies.show', compact(
+            'company', 
+            'stats', 
+            'monthlyRevenue',
+            'clientGrowth',
+            'orderStatusDist',
+            'invoiceStatusDist'
+        ));
+    }
+
+    /**
+     * Display company information.
+     */
+    public function info(Company $company)
     {
         $this->authorize('view', $company);
         $company->loadCount('users');
-        return view('companies.show', compact('company'));
+        return view('companies.info', compact('company'));
     }
 
     /**

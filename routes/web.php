@@ -26,10 +26,6 @@ Route::get('/', function () {
 
 Route::get('/invitations/accept/{token}', [InvitationController::class, 'accept'])->middleware('signed')->name('invitations.accept');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -46,6 +42,7 @@ Route::middleware('auth')->group(function () {
         
         // Company management
         Route::get('/', [CompanyController::class, 'show'])->name('companies.show');
+        Route::get('/info', [CompanyController::class, 'info'])->name('companies.info');
         Route::get('/edit', [CompanyController::class, 'edit'])->name('companies.edit');
         Route::match(['post', 'put', 'patch'], '/', [CompanyController::class, 'update'])->name('companies.update');
         Route::delete('/', [CompanyController::class, 'destroy'])->name('companies.destroy');
