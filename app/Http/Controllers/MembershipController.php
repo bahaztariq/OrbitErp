@@ -13,7 +13,7 @@ class MembershipController extends Controller
     public function index(Company $company)
     {
         $this->authorize('viewAny', Membership::class);
-        $memberships = $company->memberships;
+        $memberships = $company->memberships()->with(['user', 'role'])->get();
         return view('memberships.index', compact('memberships', 'company'));
     }
 
@@ -23,7 +23,8 @@ class MembershipController extends Controller
         $users = \App\Models\User::whereDoesntHave('companies', function($q) use ($company) {
             $q->where('companies.id', $company->id);
         })->get();
-        return view('memberships.create', compact('company', 'users'));
+        $roles = $company->roles;
+        return view('memberships.create', compact('company', 'users', 'roles'));
     }
 
     public function store(StoreMembershipRequest $request, Company $company)

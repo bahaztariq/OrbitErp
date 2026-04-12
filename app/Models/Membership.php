@@ -17,7 +17,13 @@ class Membership extends Model
     protected $fillable = [
         'user_id',
         'company_id',
+        'role_id',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 
     public function user()
     {

@@ -29,6 +29,19 @@
                 <x-input-error class="mt-2" :messages="$errors->get('email')" />
             </div>
 
+            <div>
+                <x-input-label for="role_id" value="Assigned Role" />
+                <select id="role_id" name="role_id" class="mt-1 block w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-xl shadow-sm transition-all text-sm font-medium py-3" required>
+                    <option value="" disabled {{ old('role_id') ? '' : 'selected' }}>Select a role...</option>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                            {{ $role->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <x-input-error class="mt-2" :messages="$errors->get('role_id')" />
+            </div>
+
             <div class="p-4 bg-blue-50/30 rounded-2xl border border-blue-100/50">
                 <p class="text-[10px] text-blue-600 uppercase tracking-widest leading-relaxed font-bold">
                     **Security Notification**: Once the user registers via the link, they will be granted immediate "Member" access to this workspace.
