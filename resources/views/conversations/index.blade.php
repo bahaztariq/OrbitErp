@@ -41,7 +41,7 @@
                             <h3 class="text-sm font-bold text-gray-900 truncate">{{ $conversation->display_title }}</h3>
                             <span class="text-[10px] text-gray-400 font-medium">{{ $conversation->updated_at->diffForHumans(null, true) }}</span>
                         </div>
-                        <p class="text-xs text-gray-500 truncate">{{ $conversation->description ?? 'No recent activity' }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ $conversation->messages->first()?->message ?? 'No messages yet' }}</p>
                     </div>
                 </a>
             @empty

@@ -40,7 +40,7 @@
                             <h3 class="text-sm font-bold text-gray-900 truncate">{{ $item->display_title }}</h3>
                             <span class="text-[10px] text-gray-400 font-medium">{{ $item->updated_at->diffForHumans(null, true) }}</span>
                         </div>
-                        <p class="text-xs {{ $item->id === $conversation->id ? 'text-gray-600' : 'text-gray-500' }} truncate">{{ $item->description ?? 'No recent activity' }}</p>
+                        <p class="text-xs {{ $item->id === $conversation->id ? 'text-gray-600' : 'text-gray-500' }} truncate">{{ $item->messages->first()?->message ?? 'No messages yet' }}</p>
                     </div>
                 </a>
             @endforeach
@@ -116,7 +116,7 @@
 
         <!-- Input Area -->
         <div class="p-6 bg-white border-t border-gray-100 shrink-0">
-            <form action="{{ route('messages.store', $company->slug) }}" method="POST" class="flex gap-4 items-end max-w-5xl mx-auto">
+            <form id="message-form" action="{{ route('messages.store', $company->slug) }}" method="POST" class="flex gap-4 items-end max-w-5xl mx-auto">
                 @csrf
                 <input type="hidden" name="conversation_id" value="{{ $conversation->id }}">
                 <div class="flex-1 relative">
@@ -154,13 +154,87 @@
 @push('scripts')
 <script>
     const container = document.getElementById('messages-container');
-    container.scrollTop = container.scrollHeight;
+    const messageForm = document.getElementById('message-form');
+    const messageInput = document.getElementById('message');
+    const currentUserId = {{ auth()->id() }};
+    const conversationId = {{ $conversation->id }};
 
-    // Auto-scroll on new messages if near bottom
-    const observer = new MutationObserver(() => {
+    const scrollToBottom = () => {
         container.scrollTop = container.scrollHeight;
+    };
+
+    scrollToBottom();
+
+    // Reusable function to render a message
+    const renderMessage = (message) => {
+        const isMe = message.sender_id === currentUserId;
+        const msgHtml = `
+            <div class="flex ${isMe ? 'justify-end' : 'justify-start'} group animate-in slide-in-from-${isMe ? 'right' : 'left'}-4 duration-300">
+                <div class="max-w-[70%] lg:max-w-[60%] space-y-1">
+                    ${!isMe ? `<span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-2">${message.sender.name}</span>` : ''}
+                    <div class="flex items-end gap-2 ${isMe ? 'flex-row-reverse' : ''}">
+                        <div class="px-4 py-3 rounded-2xl shadow-sm ${isMe ? 'bg-brand-500 text-white border-brand-400 rounded-tr-none' : 'bg-white text-gray-700 border border-gray-100 rounded-tl-none'}">
+                            <p class="text-sm leading-relaxed whitespace-pre-wrap">${message.message}</p>
+                        </div>
+                        <span class="text-[9px] text-gray-400 font-medium mb-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                            ${new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Remove empty state if it exists
+        const emptyState = container.querySelector('.h-full.flex.flex-col');
+        if (emptyState) emptyState.remove();
+        
+        container.insertAdjacentHTML('beforeend', msgHtml);
+        scrollToBottom();
+    };
+
+    // Handle AJAX Submission
+    messageForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const content = messageInput.value.trim();
+        if (!content) return;
+
+        const formData = new FormData(messageForm);
+        messageInput.value = '';
+        messageInput.style.height = '';
+
+        try {
+            const response = await fetch(messageForm.action, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.status === 'success') {
+                renderMessage(result.data);
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            messageInput.value = content; // Restore content on error
+        }
     });
-    observer.observe(container, { childList: true });
+
+    // Echo Listeners
+    if (window.Echo) {
+        window.Echo.private(`conversations.${conversationId}`)
+            .listen('.message.sent', (event) => {
+                if (event.message.sender_id !== currentUserId) {
+                    renderMessage(event.message);
+                }
+            })
+            .listen('.message.updated', (event) => {
+                // Handle update
+            });
+    }
 </script>
 @endpush
 @endsection

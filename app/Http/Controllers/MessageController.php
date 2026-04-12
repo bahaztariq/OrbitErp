@@ -28,6 +28,14 @@ class MessageController extends Controller
             $request->validated()
         );
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Message sent successfully',
+                'data' => $message->load('sender')
+            ]);
+        }
+
         return redirect()->route('conversations.show', [$company->slug, $message->conversation_id])
             ->with('success', 'Message sent successfully');
     }

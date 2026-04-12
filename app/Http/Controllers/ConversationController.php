@@ -41,7 +41,14 @@ class ConversationController extends Controller
     public function index(Company $company)
     {
         $this->authorize('viewAny', Conversation::class);
-        $conversations = $company->conversations()->with('users')->latest('updated_at')->get();
+        $conversations = auth()->user()->conversations()
+            ->where('company_id', $company->id)
+            ->with(['users', 'messages' => function($q) {
+                $q->latest()->limit(1);
+            }])
+            ->latest('updated_at')
+            ->get();
+            
         return view('conversations.index', compact('conversations', 'company'));
     }
 
@@ -78,8 +85,16 @@ class ConversationController extends Controller
     public function show(Company $company, Conversation $conversation)
     {
         $this->authorize('view', $conversation);
-        $conversation->load('messages.sender', 'users');
-        $conversations = $company->conversations()->with('users')->latest('updated_at')->get();
+        $conversation->load(['messages.sender', 'users']);
+        
+        $conversations = auth()->user()->conversations()
+            ->where('company_id', $company->id)
+            ->with(['users', 'messages' => function($q) {
+                $q->latest()->limit(1);
+            }])
+            ->latest('updated_at')
+            ->get();
+            
         return view('conversations.show', compact('conversation', 'company', 'conversations'));
     }
 
