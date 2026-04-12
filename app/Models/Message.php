@@ -13,9 +13,12 @@ class Message extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'content',
+        'message',
         'sender_id',
         'conversation_id',
+        'is_read',
+        'is_deleted',
+        'is_edited',
     ];
 
     public function conversation()

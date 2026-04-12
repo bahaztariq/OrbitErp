@@ -49,8 +49,8 @@
                 </div>
                 
                 <div class="flex items-center justify-between pt-4 border-t border-gray-50 mt-4">
-                    <span class="inline-flex px-2 py-1 rounded-lg bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-widest">{{ $membership->role->name ?? 'No Role' }}</span>
-                    <a href="mailto:{{ $membership->user->email }}" class="text-xs font-bold text-brand-500 hover:text-brand-600 transition-colors italic">Contact →</a>
+                    <span class="inline-flex px-2 py-1 rounded-lg bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-widest">{{ $membership->user->role->name ?? 'No Role' }}</span>
+                    <a href="{{ route('conversations.start', [$company->slug, $membership->user->id]) }}" class="text-xs font-bold text-brand-500 hover:text-brand-600 transition-colors italic">Message Member →</a>
                 </div>
             </div>
         </div>

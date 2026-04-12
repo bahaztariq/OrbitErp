@@ -82,4 +82,9 @@ class User extends Authenticatable
     {
         return $this->companies()->onlyTrashed()->get();
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
 }

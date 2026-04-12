@@ -42,6 +42,8 @@ class CompanyController extends Controller
         $this->authorize('create', Company::class);
         $company = $request->user()->companies()->create($request->validated());
 
+        $company->users()->attach(auth()->id(), ['role_id' => 1]); // admin role for creator
+
         return redirect()->route('companies.show', $company->slug)
             ->with('success', 'Company created successfully');
     }

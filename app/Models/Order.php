@@ -21,6 +21,8 @@ class Order extends Model
         'status',
         'notes',
         'company_id',
+        'created_by',
+        'updated_by',
     ];
 
     public function company()
