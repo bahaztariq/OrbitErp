@@ -16,11 +16,17 @@ class Invitation extends Model
         'email',
         'token',
         'company_id',
+        'role_id',
         'status',
         'sent_at',
         'responded_at',
         'expired_at',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 
     protected $casts = [
         'sent_at' => 'datetime',

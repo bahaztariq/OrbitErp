@@ -24,10 +24,7 @@ class StoreInvitationRequest extends FormRequest
     {
         return [
             'email' => 'required|email|max:255',
-            'company_id' => 'required|exists:companies,id',
-            'token' => 'required|string|unique:invitations,token',
-            'status' => 'required|in:pending,accepted,declined',
-            'expired_at' => 'nullable|date',
+            'role_id' => 'required|exists:roles,id',
         ];
     }
 

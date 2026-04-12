@@ -25,10 +25,12 @@ class InvitationController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
+            'role_id' => ['required', 'exists:roles,id'],
         ]);
 
         $invitation = $company->invitations()->create([
             'email' => $request->email,
+            'role_id' => $request->role_id,
             'token' => Str::random(32),
             'status' => 'pending',
             'sent_at' => now(),
@@ -74,10 +76,14 @@ class InvitationController extends Controller
                 ->with('status', 'Please register to join the company.');
         }
 
-        // Logged in: assign user to the company
+        // Logged in: assign user to the company with the specified role
         $user = auth()->user();
 
-        $user->companies()->syncWithoutDetaching([$invitation->company_id]);
+        // Use updateOrCreate or create to ensure role is assigned
+        Membership::updateOrCreate(
+            ['user_id' => $user->id, 'company_id' => $invitation->company_id],
+            ['role_id' => $invitation->role_id]
+        );
 
         $invitation->update([
             'status' => 'accepted',
