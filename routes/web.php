@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::post('clients/{client}/restore', [ClientController::class, 'restore'])->name('clients.restore');
         Route::post('clients/{client}/force-delete', [ClientController::class, 'forceDelete'])->name('clients.force-delete');
 
+        Route::get('conversations/start/{user}', [ConversationController::class, 'start'])->name('conversations.start');
         Route::resource('conversations', ConversationController::class);
         Route::post('conversations/{conversation}/restore', [ConversationController::class, 'restore'])->name('conversations.restore');
         Route::post('conversations/{conversation}/force-delete', [ConversationController::class, 'forceDelete'])->name('conversations.force-delete');

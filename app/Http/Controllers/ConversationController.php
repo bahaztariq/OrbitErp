@@ -7,14 +7,48 @@ use App\Http\Requests\Conversation\UpdateConversationRequest;
 use App\Models\Conversation;
 use App\Models\ConversationParticipant;
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ConversationController extends Controller
 {
+    public function start(Company $company, User $user)
+    {
+        $this->authorize('viewAny', Conversation::class);
+
+        // Find a private conversation (exactly 2 participants: auth user and target user)
+        $conversation = $company->conversations()
+            ->whereHas('participants', function ($q) {
+                $q->where('user_id', auth()->id());
+            })
+            ->whereHas('participants', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
+            ->has('participants', 2)
+            ->first();
+
+        if (!$conversation) {
+            $conversation = $company->conversations()->create([
+                'name' => 'Chat with ' . $user->name,
+            ]);
+
+            $conversation->participants()->attach([auth()->id(), $user->id]);
+        }
+
+        return redirect()->route('conversations.show', [$company->slug, $conversation->id]);
+    }
+
     public function index(Company $company)
     {
         $this->authorize('viewAny', Conversation::class);
-        $conversations = $company->conversations;
+        $conversations = auth()->user()->conversations()
+            ->where('company_id', $company->id)
+            ->with(['users', 'messages' => function($q) {
+                $q->latest()->limit(1);
+            }])
+            ->latest('updated_at')
+            ->get();
+            
         return view('conversations.index', compact('conversations', 'company'));
     }
 
@@ -51,8 +85,17 @@ class ConversationController extends Controller
     public function show(Company $company, Conversation $conversation)
     {
         $this->authorize('view', $conversation);
-        $conversation->load('messages', 'users');
-        return view('conversations.show', compact('conversation', 'company'));
+        $conversation->load(['messages.sender', 'users']);
+        
+        $conversations = auth()->user()->conversations()
+            ->where('company_id', $company->id)
+            ->with(['users', 'messages' => function($q) {
+                $q->latest()->limit(1);
+            }])
+            ->latest('updated_at')
+            ->get();
+            
+        return view('conversations.show', compact('conversation', 'company', 'conversations'));
     }
 
     public function edit(Company $company, Conversation $conversation)
