@@ -56,6 +56,23 @@
                 </li>
 
                 @if(isset($company))
+                <!-- AI Assistant -->
+                <li class="pt-1.5 pb-1">
+                    <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered"
+                          class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">AI</span>
+                    <hr x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered" class="border-gray-100 mx-2">
+                </li>
+                <li>
+                    <a href="{{ route('ai.assistant', $company->slug) }}"
+                       class="menu-item {{ Request::routeIs('ai.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                       :class="{ 'xl:justify-center xl:px-2': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.346.346a1 1 0 01-.707.293H10.03a1 1 0 01-.707-.293l-.346-.346z"/>
+                        </svg>
+                        <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" class="truncate">AI Assistant</span>
+                    </a>
+                </li>
                 <!-- Sales Group -->
                 <li class="pt-1.5 pb-1">
                     <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" 
