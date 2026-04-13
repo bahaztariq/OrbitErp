@@ -24,9 +24,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/invitations/accept/{token}', [InvitationController::class, 'accept'])->middleware('signed')->name('invitations.accept');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -44,6 +42,7 @@ Route::middleware('auth')->group(function () {
         
         // Company management
         Route::get('/', [CompanyController::class, 'show'])->name('companies.show');
+        Route::get('/info', [CompanyController::class, 'info'])->name('companies.info');
         Route::get('/edit', [CompanyController::class, 'edit'])->name('companies.edit');
         Route::match(['post', 'put', 'patch'], '/', [CompanyController::class, 'update'])->name('companies.update');
         Route::delete('/', [CompanyController::class, 'destroy'])->name('companies.destroy');
@@ -63,11 +62,13 @@ Route::middleware('auth')->group(function () {
         Route::post('clients/{client}/restore', [ClientController::class, 'restore'])->name('clients.restore');
         Route::post('clients/{client}/force-delete', [ClientController::class, 'forceDelete'])->name('clients.force-delete');
 
+        Route::get('conversations/start/{user}', [ConversationController::class, 'start'])->name('conversations.start');
         Route::resource('conversations', ConversationController::class);
         Route::post('conversations/{conversation}/restore', [ConversationController::class, 'restore'])->name('conversations.restore');
         Route::post('conversations/{conversation}/force-delete', [ConversationController::class, 'forceDelete'])->name('conversations.force-delete');
 
-        Route::resource('invitations', InvitationController::class);
+        Route::resource('invitations', InvitationController::class)->only(['index', 'create', 'store', 'destroy']);
+        Route::post('invitations/send', [InvitationController::class, 'send'])->name('invitations.send');
         Route::post('invitations/{invitation}/restore', [InvitationController::class, 'restore'])->name('invitations.restore');
         Route::post('invitations/{invitation}/force-delete', [InvitationController::class, 'forceDelete'])->name('invitations.force-delete');
 

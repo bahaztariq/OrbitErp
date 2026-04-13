@@ -16,7 +16,31 @@ class Invitation extends Model
         'email',
         'token',
         'company_id',
+        'role_id',
+        'status',
+        'sent_at',
+        'responded_at',
+        'expired_at',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    protected $casts = [
+        'sent_at' => 'datetime',
+        'responded_at' => 'datetime',
+        'expired_at' => 'datetime',
+    ];
+
+    /**
+     * Check if the invitation has expired.
+     */
+    public function isExpired()
+    {
+        return $this->expired_at && $this->expired_at->isPast();
+    }
 
     public function company()
     {

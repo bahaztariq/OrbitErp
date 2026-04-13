@@ -6,74 +6,93 @@ use App\Http\Requests\Invitation\StoreInvitationRequest;
 use App\Http\Requests\Invitation\UpdateInvitationRequest;
 use App\Models\Invitation;
 use App\Models\Company;
+use App\Mail\InvitationMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class InvitationController extends Controller
 {
-    public function index(Company $company)
-    {
-        $this->authorize('viewAny', Invitation::class);
-        $invitations = $company->invitations;
-        return view('invitations.index', compact('invitations', 'company'));
-    }
-
-    public function create(Company $company)
-    {
-        $this->authorize('create', Invitation::class);
-        return view('invitations.create', compact('company'));
-    }
 
     public function store(StoreInvitationRequest $request, Company $company)
     {
-        $this->authorize('create', Invitation::class);
-        $invitation = $company->invitations()->create($request->validated());
-        return redirect()->route('invitations.index', $company->slug)
-            ->with('success', 'Invitation sent successfully');
+        $this->authorize('create', [Invitation::class, $company]);
+        return $this->send($request, $company);
     }
 
-    public function show(Company $company, Invitation $invitation)
+    public function send(Request $request, Company $company)
     {
-        $this->authorize('view', $invitation);
-        return view('invitations.show', compact('invitation', 'company'));
+        $request->validate([
+            'email' => ['required', 'email'],
+            'role_id' => ['required', 'exists:roles,id'],
+        ]);
+
+        $invitation = $company->invitations()->create([
+            'email' => $request->email,
+            'role_id' => $request->role_id,
+            'token' => Str::random(32),
+            'status' => 'pending',
+            'sent_at' => now(),
+            'expired_at' => now()->addHours(24),
+        ]);
+
+        $url = URL::temporarySignedRoute(
+            'invitations.accept',
+            now()->addHours(24),
+            ['token' => $invitation->token]
+        );
+
+        Mail::to($request->email)->send(new InvitationMail($url, $company));
+
+        return redirect()->route('memberships.index', $company->slug)
+            ->with('success', 'Invitation sent successfully!');
     }
 
-    public function edit(Company $company, Invitation $invitation)
+    /**
+     * Accept an invitation.
+     */
+    public function accept(Request $request, $token)
     {
-        $this->authorize('view', $invitation);
-        return view('invitations.edit', compact('invitation', 'company'));
+        $invitation = Invitation::where('token', $token)
+                        ->where('status', 'pending')
+                        ->first();
+
+        if (!$invitation) {
+            return redirect()->route('companies.index')
+                ->with('error', 'Invitation not found or already used.');
+        }
+
+        if ($invitation->isExpired()) {
+            return redirect()->route('companies.index')
+                ->with('error', 'This invitation has expired.');
+        }
+
+        // Guest: redirect to register with the email pre-filled
+        if (auth()->guest()) {
+            session(['pending_invite_token' => $token]);
+
+            return redirect()->route('register', ['email' => $invitation->email])
+                ->with('status', 'Please register to join the company.');
+        }
+
+        // Logged in: assign user to the company with the specified role
+        $user = auth()->user();
+
+        // Use updateOrCreate or create to ensure role is assigned
+        Membership::updateOrCreate(
+            ['user_id' => $user->id, 'company_id' => $invitation->company_id],
+            ['role_id' => $invitation->role_id]
+        );
+
+        $invitation->update([
+            'status' => 'accepted',
+            'responded_at' => now(),
+        ]);
+
+        return redirect()->route('companies.show', $invitation->company->slug)
+            ->with('success', 'You have joined ' . $invitation->company->name . '!');
     }
 
-    public function update(UpdateInvitationRequest $request, Company $company, Invitation $invitation)
-    {
-        $this->authorize('update', $invitation);
-        $invitation->update($request->validated());
-        return redirect()->route('invitations.index', $company->slug)
-            ->with('success', 'Invitation updated successfully');
-    }
-
-    public function destroy(Company $company, Invitation $invitation)
-    {
-        $this->authorize('delete', $invitation);
-        $invitation->delete();
-        return redirect()->route('invitations.index', $company->slug)
-            ->with('success', 'Invitation deleted successfully');
-    }
-
-    public function restore(Company $company, $id)
-    {
-        $invitation = $company->invitations()->onlyTrashed()->findOrFail($id);
-        $this->authorize('restore', $invitation);
-        $invitation->restore();
-        return redirect()->route('invitations.index', $company->slug)
-            ->with('success', 'Invitation restored successfully');
-    }
-
-    public function forceDelete(Company $company, $id)
-    {
-        $invitation = $company->invitations()->onlyTrashed()->findOrFail($id);
-        $this->authorize('forceDelete', $invitation);
-        $invitation->forceDelete();
-        return redirect()->route('invitations.index', $company->slug)
-            ->with('success', 'Invitation permanently deleted');
-    }
+    
 }

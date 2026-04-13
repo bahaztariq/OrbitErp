@@ -33,14 +33,39 @@ class User extends Authenticatable
         ];
     }
 
-    public function role()
+    public function memberships()
     {
-        return $this->belongsTo(Role::class);
+        return $this->hasMany(Membership::class);
     }
 
-    public function hasPermission(string $permission): bool
+    public function roleInCompany(Company $company)
     {
-        return $this->role?->permissions()->where('name', $permission)->exists() ?? false;
+        return $this->memberships()
+            ->where('company_id', $company->id)
+            ->first()?->role;
+    }
+
+    public function hasPermission(string $permission, $company = null): bool
+    {
+        // Try to get company from route if not provided
+        $company = $company ?? request()->route('company');
+
+        if (!$company) {
+            return false;
+        }
+        
+
+        if (is_string($company)) {
+            $company = Company::where('slug', $company)->first();
+        }
+
+        if (!$company instanceof Company) {
+            return false;
+        }
+
+        $role = $this->roleInCompany($company);
+        
+        return $role?->permissions()->where('name', $permission)->exists() ?? false;
     }
 
     public function companies()
@@ -56,5 +81,10 @@ class User extends Authenticatable
     public function trashedCompanies()
     {
         return $this->companies()->onlyTrashed()->get();
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
     }
 }
