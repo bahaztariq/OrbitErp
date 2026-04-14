@@ -20,7 +20,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', Company::class);
+        
         $companies = auth()->user()->companies;
         return view('companies.index', compact('companies'));
     }
