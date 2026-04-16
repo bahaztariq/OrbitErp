@@ -15,12 +15,15 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('sidebar', {
-                isExpanded: window.innerWidth >= 1280,
+                isExpanded: localStorage.getItem('sidebarExpanded') !== null 
+                    ? localStorage.getItem('sidebarExpanded') === 'true' 
+                    : window.innerWidth >= 1280,
                 isMobileOpen: false,
                 isHovered: false,
 
                 toggleExpanded() {
                     this.isExpanded = !this.isExpanded;
+                    localStorage.setItem('sidebarExpanded', this.isExpanded);
                     this.isMobileOpen = false;
                 },
 
@@ -51,7 +54,12 @@
                 $store.sidebar.isExpanded = false;
             } else {
                 $store.sidebar.isMobileOpen = false;
-                $store.sidebar.isExpanded = true;
+                const saved = localStorage.getItem('sidebarExpanded');
+                if (saved !== null) {
+                    $store.sidebar.isExpanded = saved === 'true';
+                } else {
+                    $store.sidebar.isExpanded = true;
+                }
             }
         };
         window.addEventListener('resize', checkMobile);
