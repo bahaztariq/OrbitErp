@@ -17,6 +17,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\AiAssistantController;
 use App\Http\Controllers\TrashController;
 use Illuminate\Support\Facades\Route;
 
@@ -113,6 +114,10 @@ Route::middleware('auth')->group(function () {
         Route::post('tasks/{task}/force-delete', [TaskController::class, 'forceDelete'])->name('tasks.force-delete');
 
         Route::get('/trash', [TrashController::class, 'index'])->name('trash.index');
+
+        // AI Assistant
+        Route::get('/ai-assistant', [AiAssistantController::class, 'index'])->name('ai.assistant');
+        Route::post('/ai-assistant/chat', [AiAssistantController::class, 'chat'])->name('ai.chat');
     });
 });
 
