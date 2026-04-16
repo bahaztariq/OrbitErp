@@ -17,6 +17,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\AiAssistantController;
 use App\Http\Controllers\TrashController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/invitations/accept/{token}', [InvitationController::class, 'accept'])->middleware('signed')->name('invitations.accept');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -61,11 +63,13 @@ Route::middleware('auth')->group(function () {
         Route::post('clients/{client}/restore', [ClientController::class, 'restore'])->name('clients.restore');
         Route::post('clients/{client}/force-delete', [ClientController::class, 'forceDelete'])->name('clients.force-delete');
 
+        Route::get('conversations/start/{user}', [ConversationController::class, 'start'])->name('conversations.start');
         Route::resource('conversations', ConversationController::class);
         Route::post('conversations/{conversation}/restore', [ConversationController::class, 'restore'])->name('conversations.restore');
         Route::post('conversations/{conversation}/force-delete', [ConversationController::class, 'forceDelete'])->name('conversations.force-delete');
 
-        Route::resource('invitations', InvitationController::class);
+        Route::resource('invitations', InvitationController::class)->only(['index', 'create', 'store', 'destroy']);
+        Route::post('invitations/send', [InvitationController::class, 'send'])->name('invitations.send');
         Route::post('invitations/{invitation}/restore', [InvitationController::class, 'restore'])->name('invitations.restore');
         Route::post('invitations/{invitation}/force-delete', [InvitationController::class, 'forceDelete'])->name('invitations.force-delete');
 
@@ -110,6 +114,10 @@ Route::middleware('auth')->group(function () {
         Route::post('tasks/{task}/force-delete', [TaskController::class, 'forceDelete'])->name('tasks.force-delete');
 
         Route::get('/trash', [TrashController::class, 'index'])->name('trash.index');
+
+        // AI Assistant
+        Route::get('/ai-assistant', [AiAssistantController::class, 'index'])->name('ai.assistant');
+        Route::post('/ai-assistant/chat', [AiAssistantController::class, 'chat'])->name('ai.chat');
     });
 });
 
