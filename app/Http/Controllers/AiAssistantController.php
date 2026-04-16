@@ -14,7 +14,7 @@ class AiAssistantController extends Controller
         return view('ai.ai-assistant', compact('companySlug'));
     }
 
-    public function chat(Request $request)
+    public function chat(Request $request, Company $company)
     {
         $prompt = $request->input('prompt');
 
@@ -23,7 +23,7 @@ class AiAssistantController extends Controller
         }
 
         try {
-            $agent = AiAssistantAgent::make();
+            $agent = AiAssistantAgent::make($company);
             $response = $agent->prompt($prompt);
 
             return response()->json([
