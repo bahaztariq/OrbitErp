@@ -19,7 +19,6 @@
                     ? localStorage.getItem('sidebarExpanded') === 'true' 
                     : window.innerWidth >= 1280,
                 isMobileOpen: false,
-                isHovered: false,
 
                 toggleExpanded() {
                     this.isExpanded = !this.isExpanded;
@@ -33,12 +32,6 @@
 
                 setMobileOpen(val) {
                     this.isMobileOpen = val;
-                },
-
-                setHovered(val) {
-                    if (window.innerWidth >= 1280 && !this.isExpanded) {
-                        this.isHovered = val;
-                    }
                 }
             });
         });
@@ -82,8 +75,8 @@
 
         <div class="flex-1 transition-all duration-300 ease-in-out"
             :class="{
-                'xl:ml-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered,
-                'xl:ml-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered,
+                'xl:ml-[290px]': $store.sidebar.isExpanded,
+                'xl:ml-[90px]': !$store.sidebar.isExpanded,
                 'ml-0': $store.sidebar.isMobileOpen
             }">
             

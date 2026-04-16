@@ -2,17 +2,15 @@
     <button 
         @click="open = !open"
         class="flex items-center gap-3 w-full p-2 rounded-xl transition-all duration-200 hover:bg-gray-100 group"
-        :class="{ 'bg-gray-100': open, 'justify-center': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }"
+        :class="{ 'bg-gray-100': open, 'justify-center': !$store.sidebar.isExpanded }"
     >
         <!-- Company Icon/Initials -->
         <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white border-2 border-gray-100 text-gray-900 shadow-sm group-hover:border-brand-200 transition-all duration-300">
-            <span class="text-sm font-black tracking-tighter uppercase whitespace-nowrap">
-                {{ substr($company->name ?? 'Orbit', 0, 2) }}
-            </span>
+            <x-application-logo class="h-6 w-6" />
         </div>
 
         <!-- Company Info (Visible when expanded) -->
-        <div x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" 
+        <div x-show="$store.sidebar.isExpanded" 
              class="flex flex-col flex-1 items-start min-w-0"
              x-transition:enter="transition-opacity duration-300"
              x-transition:enter-start="opacity-0"
@@ -22,7 +20,7 @@
                 <span class="text-[10px] font-medium text-gray-500 truncate w-full text-left">{{ auth()->user()->email }}</span>
             </div>
         </div>
-        <div x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered" class="flex items-center gap-1.5">
+        <div x-show="$store.sidebar.isExpanded" class="flex items-center gap-1.5">
             <svg class="h-4 w-4 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
@@ -31,7 +29,7 @@
 
     <!-- Notion-style Dropdown -->
     <div
-        x-show="open && ($store.sidebar.isExpanded || $store.sidebar.isHovered)"
+        x-show="open && ($store.sidebar.isExpanded)"
         @click.away="open = false"
         x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 translate-y-2 scale-95"
