@@ -7,12 +7,14 @@
             <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Authorization Roles</h2>
             <p class="text-sm text-gray-500 mt-1">Define security groups and permission sets for {{ $company->name }}.</p>
         </div>
+        @can('create-roles', App\Models\Role::class)
         <a href="{{ route('roles.create', $company->slug) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-brand-500/20">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
             </svg>
             Define Role
         </a>
+        @endcan
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -32,13 +34,17 @@
             <div class="pt-4 border-t border-gray-50 flex items-center justify-between text-[10px] uppercase tracking-widest font-bold">
                 <a href="{{ route('roles.show', [$company->slug, $role->id]) }}" class="text-brand-500 hover:text-brand-600 transition-colors">View Full Specs</a>
                 <div class="flex gap-2">
+                    @can('update-roles', $role)
                     <a href="{{ route('roles.edit', [$company->slug, $role->id]) }}" class="text-gray-400 hover:text-brand-500 transition-colors">Edit</a>
+                    @endcan
+                    @can('delete-roles', $role)
                     <span class="text-gray-200">|</span>
                     <form action="{{ route('roles.destroy', [$company->slug, $role->id]) }}" method="POST" onsubmit="return confirm('Archive this role blueprint?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-rose-400 hover:text-rose-600 transition-colors">Erase</button>
                     </form>
+                    @endcan
                 </div>
             </div>
         </div>

@@ -13,7 +13,7 @@ class SupplierPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('view-any suppliers');
+        return $user->hasPermission('view-any-suppliers');
     }
 
     /**
@@ -21,7 +21,7 @@ class SupplierPolicy
      */
     public function view(User $user, Supplier $supplier): bool
     {
-        return $user->hasPermission('view suppliers');
+        return $user->hasPermission('view-suppliers');
     }
 
     /**
@@ -29,7 +29,7 @@ class SupplierPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('create suppliers');
+        return $user->hasPermission('create-suppliers');
     }
 
     /**
@@ -37,7 +37,7 @@ class SupplierPolicy
      */
     public function update(User $user, Supplier $supplier): bool
     {
-        return $user->hasPermission('update suppliers');
+        return $user->hasPermission('update-suppliers');
     }
 
     /**
@@ -45,7 +45,7 @@ class SupplierPolicy
      */
     public function delete(User $user, Supplier $supplier): bool
     {
-        return $user->hasPermission('delete suppliers');
+        return $user->hasPermission('delete-suppliers');
     }
 
     /**
@@ -53,7 +53,7 @@ class SupplierPolicy
      */
     public function restore(User $user, Supplier $supplier): bool
     {
-        return $user->hasPermission('restore suppliers');
+        return $user->hasPermission('restore-suppliers');
     }
 
     /**
@@ -61,6 +61,6 @@ class SupplierPolicy
      */
     public function forceDelete(User $user, Supplier $supplier): bool
     {
-        return $user->hasPermission('force-delete suppliers');
+        return $user->hasPermission('force-delete-suppliers');
     }
 }

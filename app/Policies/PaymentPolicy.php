@@ -13,7 +13,7 @@ class PaymentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('view-any payments');
+        return $user->hasPermission('view-any-payments');
     }
 
     /**
@@ -21,7 +21,7 @@ class PaymentPolicy
      */
     public function view(User $user, Payment $payment): bool
     {
-        return $user->hasPermission('view payments');
+        return $user->hasPermission('view-payments');
     }
 
     /**
@@ -29,7 +29,7 @@ class PaymentPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('create payments');
+        return $user->hasPermission('create-payments');
     }
 
     /**
@@ -37,7 +37,7 @@ class PaymentPolicy
      */
     public function update(User $user, Payment $payment): bool
     {
-        return $user->hasPermission('update payments');
+        return $user->hasPermission('update-payments');
     }
 
     /**
@@ -45,7 +45,7 @@ class PaymentPolicy
      */
     public function delete(User $user, Payment $payment): bool
     {
-        return $user->hasPermission('delete payments');
+        return $user->hasPermission('delete-payments');
     }
 
     /**
@@ -53,7 +53,7 @@ class PaymentPolicy
      */
     public function restore(User $user, Payment $payment): bool
     {
-        return $user->hasPermission('restore payments');
+        return $user->hasPermission('restore-payments');
     }
 
     /**
@@ -61,6 +61,6 @@ class PaymentPolicy
      */
     public function forceDelete(User $user, Payment $payment): bool
     {
-        return $user->hasPermission('force-delete payments');
+        return $user->hasPermission('force-delete-payments');
     }
 }

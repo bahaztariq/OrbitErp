@@ -13,7 +13,7 @@ class MembershipPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('view-any memberships');
+        return $user->hasPermission('view-any-memberships');
     }
 
     /**
@@ -21,7 +21,7 @@ class MembershipPolicy
      */
     public function view(User $user, Membership $membership): bool
     {
-        return $user->hasPermission('view memberships');
+        return $user->hasPermission('view-memberships');
     }
 
     /**
@@ -29,7 +29,7 @@ class MembershipPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('create memberships');
+        return $user->hasPermission('create-memberships');
     }
 
     /**
@@ -37,7 +37,7 @@ class MembershipPolicy
      */
     public function update(User $user, Membership $membership): bool
     {
-        return $user->hasPermission('update memberships');
+        return $user->hasPermission('update-memberships');
     }
 
     /**
@@ -45,7 +45,7 @@ class MembershipPolicy
      */
     public function delete(User $user, Membership $membership): bool
     {
-        return $user->hasPermission('delete memberships');
+        return $user->hasPermission('delete-memberships');
     }
 
     /**
@@ -53,7 +53,7 @@ class MembershipPolicy
      */
     public function restore(User $user, Membership $membership): bool
     {
-        return $user->hasPermission('restore memberships');
+        return $user->hasPermission('restore-memberships');
     }
 
     /**
@@ -61,6 +61,6 @@ class MembershipPolicy
      */
     public function forceDelete(User $user, Membership $membership): bool
     {
-        return $user->hasPermission('force-delete memberships');
+        return $user->hasPermission('force-delete-memberships');
     }
 }
