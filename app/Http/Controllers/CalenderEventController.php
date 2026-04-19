@@ -10,11 +10,22 @@ use Illuminate\Http\Request;
 
 class CalenderEventController extends Controller
 {
-    public function index(Company $company)
+    public function index(Request $request, Company $company)
     {
         $this->authorize('viewAny', CalenderEvent::class);
-        $events = $company->calenderEvents;
-        return view('calender-events.index', compact('events', 'company'));
+        
+        $month = $request->input('month', now()->month);
+        $year = $request->input('year', now()->year);
+        
+        $date = \Carbon\Carbon::createFromDate($year, $month, 1);
+        $startOfGrid = $date->copy()->startOfMonth()->startOfWeek(\Carbon\Carbon::SUNDAY);
+        $endOfGrid = $date->copy()->endOfMonth()->endOfWeek(\Carbon\Carbon::SATURDAY);
+        
+        $events = $company->calenderEvents()
+            ->whereBetween('event_date', [$startOfGrid, $endOfGrid])
+            ->get();
+            
+        return view('calender-events.index', compact('events', 'company', 'date', 'startOfGrid', 'endOfGrid'));
     }
 
     public function create(Company $company)

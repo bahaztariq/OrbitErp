@@ -1,112 +1,103 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="space-y-6 text-sm">
-    <div class="flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Agenda & Calendar</h2>
-            <p class="text-sm text-gray-500 mt-1">Schedule and track company events for {{ $company->name }}.</p>
+<div class="space-y-6 flex flex-col h-[calc(100vh-140px)]">
+    <!-- Header -->
+    <div class="flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Calendar</h2>
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mt-1">Resource Planning for {{ $company->name }}</p>
+            </div>
+
+            <div class="flex items-center bg-gray-100 p-1 rounded-2xl gap-1">
+                <a href="{{ route('calender-events.index', [$company->slug, 'month' => $date->copy()->subMonth()->month, 'year' => $date->copy()->subMonth()->year]) }}" class="p-2 hover:bg-white hover:shadow-sm rounded-xl transition-all text-gray-500 hover:text-gray-900">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </a>
+                <span class="px-4 text-xs font-black uppercase tracking-widest text-gray-900 min-w-[140px] text-center">
+                    {{ $date->format('F Y') }}
+                </span>
+                <a href="{{ route('calender-events.index', [$company->slug, 'month' => $date->copy()->addMonth()->month, 'year' => $date->copy()->addMonth()->year]) }}" class="p-2 hover:bg-white hover:shadow-sm rounded-xl transition-all text-gray-500 hover:text-gray-900">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+            
+            <a href="{{ route('calender-events.index', [$company->slug]) }}" class="px-4 py-2 bg-white border border-gray-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-500 hover:border-brand-200 transition-all shadow-sm">Today</a>
         </div>
-        <a href="{{ route('calender-events.create', $company->slug) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-brand-500/20">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Add Event
-        </a>
+
+        <div class="flex items-center gap-3">
+            <a href="{{ route('calender-events.create', $company->slug) }}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-brand-500/20 active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                New Event
+            </a>
+        </div>
     </div>
 
-    <!-- Calendar Layout Placeholder -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div class="lg:col-span-1 space-y-4">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Upcoming Events</h3>
-                <div class="space-y-4">
-                    @forelse($events->where('event_date', '>=', now())->take(5) as $event)
-                    <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100 group">
-                        <div class="w-10 h-10 shrink-0 rounded-lg bg-indigo-50 text-indigo-500 flex flex-col items-center justify-center text-[10px]">
-                            <span class="font-bold">{{ \Carbon\Carbon::parse($event->event_date)->format('d') }}</span>
-                            <span class="uppercase tracking-tighter">{{ \Carbon\Carbon::parse($event->event_date)->format('M') }}</span>
-                        </div>
-                        <div class="min-w-0">
-                            <a href="{{ route('calender-events.show', [$company->slug, $event->id]) }}" class="block font-bold text-gray-900 truncate hover:text-brand-500 transition-colors">{{ $event->title }}</a>
-                            <span class="text-[10px] text-gray-400 uppercase tracking-tighter">{{ \Carbon\Carbon::parse($event->event_date)->format('h:i A') }}</span>
-                        </div>
+    <!-- Main Content Grid -->
+    <div class="flex-1 flex gap-6 min-h-0 overflow-hidden">
+        
+        <!-- Calendar Board -->
+        <div class="flex-1 bg-white rounded-[3rem] border border-gray-100 shadow-sm flex flex-col min-w-0 overflow-hidden">
+            <!-- Day Labels -->
+            <div class="grid grid-cols-7 border-b border-gray-50 bg-gray-50/30">
+                @foreach(['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] as $day)
+                    <div class="py-4 text-center">
+                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{{ $day }}</span>
                     </div>
-                    @empty
-                    <div class="text-gray-400 italic text-[10px]">No upcoming events.</div>
-                    @endforelse
-                </div>
+                @endforeach
             </div>
-        </div>
 
-        <div class="lg:col-span-3">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50/50 border-b border-gray-100 italic">
-                                <th class="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Event Title</th>
-                                <th class="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Date & Time</th>
-                                <th class="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Brief</th>
-                                <th class="py-4 px-6 text-xs font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @forelse($events as $event)
-                            <tr class="group hover:bg-gray-50/50 transition-colors">
-                                <td class="py-4 px-6">
-                                    <span class="font-bold text-gray-900 group-hover:text-brand-500 transition-colors">{{ $event->title }}</span>
-                                </td>
-                                <td class="py-4 px-6 text-gray-600 font-medium whitespace-nowrap">
-                                    {{ \Carbon\Carbon::parse($event->event_date)->format('M d, Y @ h:i A') }}
-                                </td>
-                                <td class="py-4 px-6 text-gray-500 truncate max-w-xs">
-                                    {{ Str::limit($event->description, 50) }}
-                                </td>
-                                <td class="py-4 px-6 text-right">
-                                    <x-table.actions-dropdown>
-                                        <x-table.dropdown-item :href="route('calender-events.show', [$company->slug, $event->id])">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            View Details
-                                        </x-table.dropdown-item>
-                                        
-                                        <x-table.dropdown-item :href="route('calender-events.edit', [$company->slug, $event->id])">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                            Edit Event
-                                        </x-table.dropdown-item>
+            <!-- Grid -->
+            <div class="flex-1 grid grid-cols-7 grid-rows-6 min-h-0 overflow-y-auto custom-scrollbar">
+                @php
+                    $startOfGrid = $date->copy()->startOfMonth()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                @endphp
+                @for($i = 0; $i < 42; $i++)
+                    @php 
+                        $currentDate = $startOfGrid->copy()->addDays($i);
+                        $dayEvents = $events->filter(function($e) use ($currentDate) {
+                            return \Carbon\Carbon::parse($e->event_date)->isSameDay($currentDate);
+                        });
+                    @endphp
+                    <div class="border-b border-r border-gray-50 p-3 flex flex-col gap-2 relative {{ $currentDate->month != $date->month ? 'bg-gray-50/20' : '' }} hover:bg-gray-50/50 transition-colors">
+                        <!-- Date Number -->
+                        <div class="flex justify-end pr-1">
+                            <span class="text-xs font-black {{ $currentDate->isToday() ? 'w-7 h-7 bg-brand-500 text-white rounded-xl' : ($currentDate->month != $date->month ? 'text-gray-200' : 'text-gray-900') }} flex items-center justify-center transition-all">
+                                {{ $currentDate->day }}
+                            </span>
+                        </div>
 
-                                        <div class="my-1 border-t border-gray-100"></div>
-
-                                        <form action="{{ route('calender-events.destroy', [$company->slug, $event->id]) }}" method="POST" onsubmit="return confirm('Move this event to trash?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <x-table.dropdown-item type="button" danger>
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                                Move to Trash
-                                            </x-table.dropdown-item>
-                                        </form>
-                                    </x-table.actions-dropdown>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="4" class="py-16 text-center text-gray-400 italic">
-                                    The calendar is currently empty.
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        <!-- Events -->
+                        <div class="flex-1 space-y-1 overflow-y-auto custom-scrollbar">
+                            @foreach($dayEvents as $event)
+                                <a href="{{ route('calender-events.show', [$company->slug, $event->id]) }}" 
+                                   class="block px-3 py-1.5 bg-brand-50 border border-brand-100 rounded-xl hover:bg-brand-500 hover:text-white transition-all group/chip">
+                                    <div class="flex items-center gap-1.5 overflow-hidden">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-brand-500 group-hover/chip:bg-white shrink-0"></div>
+                                        <span class="text-[9px] font-black truncate uppercase tracking-tighter">{{ $event->title }}</span>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                        
+                        <!-- Quick Add -->
+                        <a href="{{ route('calender-events.create', [$company->slug, 'date' => $currentDate->toDateString()]) }}" 
+                           class="absolute inset-0 opacity-0 hover:opacity-100 flex items-center justify-center bg-brand-50/30 cursor-pointer transition-opacity pointer-events-none hover:pointer-events-auto">
+                            <span class="bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-[9px] font-black text-brand-500 uppercase tracking-widest shadow-lg border border-brand-100">+ New Event</span>
+                        </a>
+                    </div>
+                @endfor
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #f1f1f1; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #e2e2e2; }
+    
+    /* Perfect Square Logic if needed can be added via JS, but grid-rows-6 works well for fixed layouts */
+</style>
 @endsection
