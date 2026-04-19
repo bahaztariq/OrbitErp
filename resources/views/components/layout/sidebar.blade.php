@@ -19,6 +19,7 @@
         <nav x-data="{ selected: '{{ Request::routeIs('dashboard') ? 'dashboard' : (Request::segment(3) ?? '') }}' }">
             <ul class="space-y-0.5">
                 <!-- Dashboard -->
+                @can('viewAny', App\Models\Company::class)
                 <li>
                     <a href="{{ isset($company) ? (is_object($company) ? route('companies.show', $company->slug) : route('companies.show', $company)) : route('companies.index') }}" 
                        class="menu-item {{ Request::routeIs('companies.show') || Request::routeIs('companies.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -29,6 +30,7 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Dashboard</span>
                     </a>
                 </li>
+                @endcan
 
                 @if(isset($company))
                 <!-- AI Assistant -->
@@ -49,12 +51,14 @@
                     </a>
                 </li>
                 <!-- Sales Group -->
+                @if(auth()->user()->can('viewAny', App\Models\Client::class) || auth()->user()->can('viewAny', App\Models\Invoice::class) || auth()->user()->can('viewAny', App\Models\Order::class) || auth()->user()->can('viewAny', App\Models\Payment::class))
                 <li class="pt-1.5 pb-1">
                     <span x-show="$store.sidebar.isExpanded" 
                           class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Sales</span>
                     <hr x-show="!$store.sidebar.isExpanded" class="border-gray-100 mx-2">
                 </li>
 
+                @can('viewAny', App\Models\Client::class)
                 <li>
                     <a href="{{ route('clients.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('clients.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -65,6 +69,9 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Clients</span>
                      </a>
                 </li>
+                @endcan
+
+                @can('viewAny', App\Models\Invoice::class)
                 <li>
                     <a href="{{ route('invoices.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('invoices.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -75,6 +82,9 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Invoices</span>
                     </a>
                 </li>
+                @endcan
+
+                @can('viewAny', App\Models\Order::class)
                 <li>
                     <a href="{{ route('orders.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('orders.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -85,6 +95,9 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Orders</span>
                     </a>
                 </li>
+                @endcan
+
+                @can('viewAny', App\Models\Payment::class)
                 <li>
                     <a href="{{ route('payments.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('payments.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -95,14 +108,18 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Payments</span>
                     </a>
                 </li>
+                @endcan
+                @endif
 
                 <!-- Inventory Group -->
+                @if(auth()->user()->can('viewAny', App\Models\Product::class) || auth()->user()->can('viewAny', App\Models\Category::class) || auth()->user()->can('viewAny', App\Models\Supplier::class))
                 <li class="pt-1.5 pb-1">
                     <span x-show="$store.sidebar.isExpanded" 
                           class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Inventory</span>
                     <hr x-show="!$store.sidebar.isExpanded" class="border-gray-100 mx-2">
                 </li>
 
+                @can('viewAny', App\Models\Product::class)
                 <li>
                     <a href="{{ route('products.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('products.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -113,6 +130,9 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Products</span>
                     </a>
                 </li>
+                @endcan
+
+                @can('viewAny', App\Models\Category::class)
                 <li>
                     <a href="{{ route('categories.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('categories.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -123,6 +143,9 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Categories</span>
                     </a>
                 </li>
+                @endcan
+
+                @can('viewAny', App\Models\Supplier::class)
                 <li>
                     <a href="{{ route('suppliers.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('suppliers.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -133,14 +156,18 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Suppliers</span>
                     </a>
                 </li>
+                @endcan
+                @endif
 
                 <!-- Collaboration Group -->
+                @if(auth()->user()->can('viewAny', App\Models\Task::class) || auth()->user()->can('viewAny', App\Models\CalenderEvent::class) || auth()->user()->can('viewAny', App\Models\Conversation::class))
                 <li class="pt-1.5 pb-1">
                     <span x-show="$store.sidebar.isExpanded" 
                           class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Collaboration</span>
                     <hr x-show="!$store.sidebar.isExpanded" class="border-gray-100 mx-2">
                 </li>
 
+                @can('viewAny', App\Models\Task::class)
                 <li>
                     <a href="{{ route('tasks.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('tasks.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -151,6 +178,9 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Tasks</span>
                     </a>
                 </li>
+                @endcan
+
+                @can('viewAny', App\Models\CalenderEvent::class)
                 <li>
                     <a href="{{ route('calender-events.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('calender-events.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -161,6 +191,9 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Calendar</span>
                     </a>
                 </li>
+                @endcan
+
+                @can('viewAny', App\Models\Conversation::class)
                 <li>
                     <a href="{{ route('conversations.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('conversations.*') || Request::routeIs('messages.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -171,14 +204,18 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Messages</span>
                     </a>
                 </li>
+                @endcan
+                @endif
 
                 <!-- Access Control Group -->
+                @if(auth()->user()->can('viewAny', App\Models\Membership::class) || auth()->user()->can('viewAny', App\Models\Role::class))
                 <li class="pt-1.5 pb-1">
                     <span x-show="$store.sidebar.isExpanded" 
                           class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Access Control</span>
                     <hr x-show="!$store.sidebar.isExpanded" class="border-gray-100 mx-2">
                 </li>
 
+                @can('viewAny', App\Models\Membership::class)
                 <li>
                     <a href="{{ route('memberships.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('memberships.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -189,6 +226,9 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Members</span>
                     </a>
                 </li>
+                @endcan
+
+                @can('viewAny', App\Models\Role::class)
                 <li>
                     <a href="{{ route('roles.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('roles.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -199,14 +239,18 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Roles</span>
                     </a>
                 </li>
+                @endcan
+                @endif
 
                 <!-- System Group -->
+                @if(auth()->user()->can('viewAny', App\Models\Company::class))
                 <li class="pt-3 pb-1">
                     <span x-show="$store.sidebar.isExpanded" 
                           class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">System</span>
                     <hr x-show="!$store.sidebar.isExpanded" class="border-gray-100 mx-2">
                 </li>
                 
+                @can('viewAny', App\Models\Company::class)
                 <li>
                     <a href="{{ route('companies.info', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('companies.info') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -217,7 +261,9 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Info</span>
                     </a>
                 </li>
+                @endcan
 
+                @can('viewAny', App\Models\Company::class)
                 <li>
                     <a href="{{ route('trash.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('trash.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -228,6 +274,8 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Trash</span>
                     </a>
                 </li>
+                @endcan
+                @endif
                 @endif
 
             </ul>

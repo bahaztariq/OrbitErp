@@ -26,10 +26,12 @@
         </div>
 
         <div class="flex items-center gap-3">
+            @can('create', App\Models\CalenderEvent::class)
             <a href="{{ route('calender-events.create', $company->slug) }}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-brand-500/20 active:scale-95">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                 New Event
             </a>
+            @endcan
         </div>
     </div>
 
@@ -70,6 +72,7 @@
                         <!-- Events -->
                         <div class="flex-1 space-y-1 overflow-y-auto custom-scrollbar">
                             @foreach($dayEvents as $event)
+                                @can('view', $event)
                                 <a href="{{ route('calender-events.show', [$company->slug, $event->id]) }}" 
                                    class="block px-3 py-1.5 bg-brand-50 border border-brand-100 rounded-xl hover:bg-brand-500 hover:text-white transition-all group/chip">
                                     <div class="flex items-center gap-1.5 overflow-hidden">
@@ -77,14 +80,17 @@
                                         <span class="text-[9px] font-black truncate uppercase tracking-tighter">{{ $event->title }}</span>
                                     </div>
                                 </a>
+                                @endcan
                             @endforeach
                         </div>
                         
                         <!-- Quick Add -->
+                        @can('create', App\Models\CalenderEvent::class)
                         <a href="{{ route('calender-events.create', [$company->slug, 'date' => $currentDate->toDateString()]) }}" 
                            class="absolute inset-0 opacity-0 hover:opacity-100 flex items-center justify-center bg-brand-50/30 cursor-pointer transition-opacity pointer-events-none hover:pointer-events-auto">
                             <span class="bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-[9px] font-black text-brand-500 uppercase tracking-widest shadow-lg border border-brand-100">+ New Event</span>
                         </a>
+                        @endcan
                     </div>
                 @endfor
             </div>

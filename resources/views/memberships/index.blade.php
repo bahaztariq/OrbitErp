@@ -7,12 +7,14 @@
             <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Workforce & Permissions</h2>
             <p class="text-sm text-gray-500 mt-1">Manage company access and memberships for {{ $company->name }}.</p>
         </div>
+        @can('create', App\Models\Membership::class)
         <a href="{{ route('memberships.create', $company->slug) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-brand-500/20">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             Add Member
         </a>
+        @endcan
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -20,7 +22,7 @@
         <div class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-6 relative overflow-hidden">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center text-brand-500 font-bold text-xl group-hover:bg-brand-500 group-hover:text-white transition-all transform duration-500 shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-brand-5 flex items-center justify-center text-brand-500 font-bold text-xl group-hover:bg-brand-500 group-hover:text-white transition-all transform duration-500 shadow-sm">
                         {{ substr($membership->user->name, 0, 1) }}
                     </div>
                     <div>
@@ -29,16 +31,18 @@
                     </div>
                 </div>
                 <x-table.actions-dropdown>
-                    <form action="{{ route('memberships.destroy', [$company->slug, $membership->id]) }}" method="POST" onsubmit="return confirm('Revoke this membership?');">
+                    @can('delete', $membership)
+                    <form action="{{ route('memberships.destroy', [$company->slug, $membership->id]) }}" method="POST" onsubmit="return confirm('Revoke this user\'s membership?');">
                         @csrf
                         @method('DELETE')
-                        <x-table.dropdown-item type="button" danger>
+                        <x-table.dropdown-item type="submit" danger>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6" />
                             </svg>
                             Revoke Access
                         </x-table.dropdown-item>
                     </form>
+                    @endcan
                 </x-table.actions-dropdown>
             </div>
             
