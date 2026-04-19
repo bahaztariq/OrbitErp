@@ -7,6 +7,7 @@ use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Models\Task;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use App\Notifications\TaskNotification;
 
 class TaskController extends Controller
 {
@@ -29,6 +30,15 @@ class TaskController extends Controller
     {
         $this->authorize('create', Task::class);
         $task = $company->tasks()->create($request->validated());
+
+        if ($task->assignedTo) {
+            $task->assignedTo->notify(new TaskNotification(
+                $task, 
+                'New Task Assigned', 
+                "You have been assigned to: {$task->title}"
+            ));
+        }
+
         return redirect()->route('tasks.index', $company->slug)
             ->with('success', 'Task created successfully');
     }
@@ -50,7 +60,18 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Company $company, Task $task)
     {
         $this->authorize('update', $task);
+        $oldAssignedTo = $task->assigned_to;
         $task->update($request->validated());
+
+        // Notify if assigned to someone new
+        if ($task->assigned_to && $task->assigned_to != $oldAssignedTo) {
+            $task->assignedTo->notify(new \App\Notifications\TaskNotification(
+                $task,
+                'Task Re-assigned',
+                "The task '{$task->title}' has been re-assigned to you."
+            ));
+        }
+
         return redirect()->route('tasks.index', $company->slug)
             ->with('success', 'Task updated successfully');
     }
