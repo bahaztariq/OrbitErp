@@ -13,7 +13,7 @@ class CalenderEventPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('view-any-calender-events');
+        return $user->hasPermission('view-any calender-events');
     }
 
     /**
@@ -21,7 +21,7 @@ class CalenderEventPolicy
      */
     public function view(User $user, CalenderEvent $calenderEvent): bool
     {
-        return $user->hasPermission('view-calender-events');
+        return $user->hasPermission('view calender-events');
     }
 
     /**
@@ -29,7 +29,7 @@ class CalenderEventPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('create-calender-events');
+        return $user->hasPermission('create calender-events');
     }
 
     /**
@@ -37,7 +37,7 @@ class CalenderEventPolicy
      */
     public function update(User $user, CalenderEvent $calenderEvent): bool
     {
-        return $user->hasPermission('update-calender-events');
+        return $user->hasPermission('update calender-events');
     }
 
     /**
@@ -45,7 +45,7 @@ class CalenderEventPolicy
      */
     public function delete(User $user, CalenderEvent $calenderEvent): bool
     {
-        return $user->hasPermission('delete-calender-events');
+        return $user->hasPermission('delete calender-events');
     }
 
     /**
@@ -53,7 +53,7 @@ class CalenderEventPolicy
      */
     public function restore(User $user, CalenderEvent $calenderEvent): bool
     {
-        return $user->hasPermission('restore-calender-events');
+        return $user->hasPermission('restore calender-events');
     }
 
     /**
@@ -61,6 +61,6 @@ class CalenderEventPolicy
      */
     public function forceDelete(User $user, CalenderEvent $calenderEvent): bool
     {
-        return $user->hasPermission('force-delete-calender-events');
+        return $user->hasPermission('force-delete calender-events');
     }
 }

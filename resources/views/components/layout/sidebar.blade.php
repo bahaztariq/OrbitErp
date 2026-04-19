@@ -55,7 +55,6 @@
                     <hr x-show="!$store.sidebar.isExpanded" class="border-gray-100 mx-2">
                 </li>
 
-                @can('view-any-clients', App\Models\Client::class)
                 <li>
                     <a href="{{ route('clients.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('clients.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -66,9 +65,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Clients</span>
                      </a>
                 </li>
-                @endcan
-
-                @can('view-any-invoices', App\Models\Invoice::class)
                 <li>
                     <a href="{{ route('invoices.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('invoices.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -79,9 +75,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Invoices</span>
                     </a>
                 </li>
-                @endcan
-
-                @can('view-any-orders', App\Models\Order::class)
                 <li>
                     <a href="{{ route('orders.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('orders.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -92,9 +85,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Orders</span>
                     </a>
                 </li>
-                @endcan
-
-                @can('view-any-payments', App\Models\Payment::class)
                 <li>
                     <a href="{{ route('payments.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('payments.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -105,7 +95,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Payments</span>
                     </a>
                 </li>
-                @endcan
 
                 <!-- Inventory Group -->
                 <li class="pt-1.5 pb-1">
@@ -114,7 +103,6 @@
                     <hr x-show="!$store.sidebar.isExpanded" class="border-gray-100 mx-2">
                 </li>
 
-                @can('view-any-products', App\Models\Product::class)
                 <li>
                     <a href="{{ route('products.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('products.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -125,9 +113,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Products</span>
                     </a>
                 </li>
-                @endcan
-
-                @can('view-any-categories', App\Models\Category::class)
                 <li>
                     <a href="{{ route('categories.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('categories.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -138,9 +123,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Categories</span>
                     </a>
                 </li>
-                @endcan
-
-                @can('view-any-suppliers', App\Models\Supplier::class)
                 <li>
                     <a href="{{ route('suppliers.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('suppliers.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -151,7 +133,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Suppliers</span>
                     </a>
                 </li>
-                @endcan
 
                 <!-- Collaboration Group -->
                 <li class="pt-1.5 pb-1">
@@ -160,7 +141,6 @@
                     <hr x-show="!$store.sidebar.isExpanded" class="border-gray-100 mx-2">
                 </li>
 
-                @can('view-any-tasks', App\Models\Task::class)
                 <li>
                     <a href="{{ route('tasks.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('tasks.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -171,9 +151,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Tasks</span>
                     </a>
                 </li>
-                @endcan
-
-                @can('view-any-calender-events', App\Models\CalenderEvent::class)
                 <li>
                     <a href="{{ route('calender-events.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('calender-events.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -184,9 +161,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Calendar</span>
                     </a>
                 </li>
-                @endcan
-
-                @can('view-any-conversations', App\Models\Conversation::class)
                 <li>
                     <a href="{{ route('conversations.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('conversations.*') || Request::routeIs('messages.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -197,7 +171,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Messages</span>
                     </a>
                 </li>
-                @endcan
 
                 <!-- Access Control Group -->
                 <li class="pt-1.5 pb-1">
@@ -206,7 +179,6 @@
                     <hr x-show="!$store.sidebar.isExpanded" class="border-gray-100 mx-2">
                 </li>
 
-                @can('view-any-memberships', App\Models\Membership::class)
                 <li>
                     <a href="{{ route('memberships.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('memberships.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -217,9 +189,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Members</span>
                     </a>
                 </li>
-                @endcan
-
-                @can('view-any-roles', App\Models\Role::class)
                 <li>
                     <a href="{{ route('roles.index', $company->slug) }}" 
                        class="menu-item {{ Request::routeIs('roles.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -230,7 +199,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Roles</span>
                     </a>
                 </li>
-                @endcan
 
                 <!-- System Group -->
                 <li class="pt-3 pb-1">

@@ -7,7 +7,6 @@
             <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Operations Board</h2>
             <p class="text-sm text-gray-500 mt-1 uppercase tracking-widest font-black text-[10px]">Workflow Management for {{ $company->name }}</p>
         </div>
-        @can('create-tasks', App\Models\Task::class)
         <div class="flex items-center gap-3">
             <a href="{{ route('tasks.create', $company->slug) }}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-brand-500/20 active:scale-95">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -16,7 +15,6 @@
                 New Task
             </a>
         </div>
-        @endcan
     </div>
 
     @php
@@ -64,16 +62,7 @@
                                         
                                         <x-table.actions-dropdown>
                                             <x-table.dropdown-item :href="route('tasks.show', [$company->slug, $task->id])">View</x-table.dropdown-item>
-                                            @can('update-tasks', $task)
                                             <x-table.dropdown-item :href="route('tasks.edit', [$company->slug, $task->id])">Edit</x-table.dropdown-item>
-                                            @endcan
-                                            @can('delete-tasks', $task)
-                                            <form action="{{ route('tasks.destroy', [$company->slug, $task->id]) }}" method="POST" onsubmit="return confirm('Move to Trash?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <x-table.dropdown-item type="submit" danger>Delete</x-table.dropdown-item>
-                                            </form>
-                                            @endcan
                                         </x-table.actions-dropdown>
                                     </div>
 
@@ -125,11 +114,9 @@
                     </div>
                     
                     <!-- Add Card Shortcut -->
-                    @can('create-tasks', App\Models\Task::class)
                     <a href="{{ route('tasks.create', ['company' => $company->slug, 'status' => $status]) }}" class="group/btn flex items-center justify-center py-4 border-2 border-dashed border-gray-100 rounded-[2rem] hover:border-brand-200 hover:bg-white transition-all">
                         <span class="text-[10px] font-black text-gray-300 group-hover/btn:text-brand-500 uppercase tracking-widest">+ New Item</span>
                     </a>
-                    @endcan
                 </div>
             @endforeach
         </div>

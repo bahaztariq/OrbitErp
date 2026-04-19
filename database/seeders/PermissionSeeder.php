@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Permission;
 
@@ -19,13 +20,22 @@ class PermissionSeeder extends Seeder
         ];
 
         foreach ($resources as $resource) {
-            $actions = ['view-any', 'view', 'create', 'update', 'delete', 'restore', 'force-delete'];
+            $actions = ['view', 'create', 'update', 'delete', 'restore', 'force-delete'];
             foreach ($actions as $action) {
-                Permission::updateOrCreate(
-                    ['name' => "$action-$resource"],
-                    ['description' => ucfirst(str_replace('-', ' ', $action)) . " " . str_replace('-', ' ', $resource)]
-                );
+                Permission::firstOrCreate([
+                    'name' => "$action $resource",
+                    'description' => ucfirst($action) . " " . str_replace('-', ' ', $resource),
+                ]);
             }
         }
+
+        // Add index permissions specifically if needed, or view Any
+        foreach ($resources as $resource) {
+            Permission::firstOrCreate([
+                'name' => "view-any $resource",
+                'description' => "View any " . str_replace('-', ' ', $resource),
+            ]);
+        }
+
     }
 }

@@ -26,12 +26,10 @@
         </div>
 
         <div class="flex items-center gap-3">
-            @can('create-calendar-events', App\Models\CalenderEvent::class)
             <a href="{{ route('calender-events.create', $company->slug) }}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-brand-500/20 active:scale-95">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                 New Event
             </a>
-            @endcan
         </div>
     </div>
 
@@ -83,12 +81,10 @@
                         </div>
                         
                         <!-- Quick Add -->
-                        @can('create-calendar-events', App\Models\CalenderEvent::class)
                         <a href="{{ route('calender-events.create', [$company->slug, 'date' => $currentDate->toDateString()]) }}" 
                            class="absolute inset-0 opacity-0 hover:opacity-100 flex items-center justify-center bg-brand-50/30 cursor-pointer transition-opacity pointer-events-none hover:pointer-events-auto">
                             <span class="bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-[9px] font-black text-brand-500 uppercase tracking-widest shadow-lg border border-brand-100">+ New Event</span>
                         </a>
-                        @endcan
                     </div>
                 @endfor
             </div>

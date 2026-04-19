@@ -13,7 +13,7 @@ class ConversationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('view-any-conversations');
+        return $user->hasPermission('view-any conversations');
     }
 
     /**
@@ -21,7 +21,7 @@ class ConversationPolicy
      */
     public function view(User $user, Conversation $conversation): bool
     {
-        return $user->hasPermission('view-conversations');
+        return $user->hasPermission('view conversations');
     }
 
     /**
@@ -29,7 +29,7 @@ class ConversationPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('create-conversations');
+        return $user->hasPermission('create conversations');
     }
 
     /**
@@ -37,7 +37,7 @@ class ConversationPolicy
      */
     public function update(User $user, Conversation $conversation): bool
     {
-        return $user->hasPermission('update-conversations');
+        return $user->hasPermission('update conversations');
     }
 
     /**
@@ -45,7 +45,7 @@ class ConversationPolicy
      */
     public function delete(User $user, Conversation $conversation): bool
     {
-        return $user->hasPermission('delete-conversations');
+        return $user->hasPermission('delete conversations');
     }
 
     /**
@@ -53,7 +53,7 @@ class ConversationPolicy
      */
     public function restore(User $user, Conversation $conversation): bool
     {
-        return $user->hasPermission('restore-conversations');
+        return $user->hasPermission('restore conversations');
     }
 
     /**
@@ -61,6 +61,6 @@ class ConversationPolicy
      */
     public function forceDelete(User $user, Conversation $conversation): bool
     {
-        return $user->hasPermission('force-delete-conversations');
+        return $user->hasPermission('force-delete conversations');
     }
 }

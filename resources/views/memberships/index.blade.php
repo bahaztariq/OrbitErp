@@ -7,14 +7,12 @@
             <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Workforce & Permissions</h2>
             <p class="text-sm text-gray-500 mt-1">Manage company access and memberships for {{ $company->name }}.</p>
         </div>
-        @can('create-memberships', App\Models\Membership::class)
         <a href="{{ route('memberships.create', $company->slug) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-brand-500/20">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
             Add Member
         </a>
-        @endcan
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -30,20 +28,18 @@
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-0.5">Joined {{ $membership->created_at }}</p>
                     </div>
                 </div>
-                @can('delete-memberships', $membership)
                 <x-table.actions-dropdown>
                     <form action="{{ route('memberships.destroy', [$company->slug, $membership->id]) }}" method="POST" onsubmit="return confirm('Revoke this membership?');">
                         @csrf
                         @method('DELETE')
-                        <x-table.dropdown-item type="submit" danger>
+                        <x-table.dropdown-item type="button" danger>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1H12v-1a6 6 0 00-6-6zM21 12h-6" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6" />
                             </svg>
                             Revoke Access
                         </x-table.dropdown-item>
                     </form>
                 </x-table.actions-dropdown>
-                @endcan
             </div>
             
             <div class="space-y-4">
