@@ -30,7 +30,6 @@ class CompanyController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Company::class);
         return view('companies.create');
     }
 
@@ -39,7 +38,6 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request)
     {
-        $this->authorize('create', Company::class);
         $company = $request->user()->companies()->create($request->validated());
 
         $company->users()->attach(auth()->id(), ['role_id' => 1]); // admin role for creator

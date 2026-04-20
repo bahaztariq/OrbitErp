@@ -93,10 +93,6 @@ Route::middleware('auth')->group(function () {
         Route::post('payments/{payment}/restore', [PaymentController::class, 'restore'])->name('payments.restore');
         Route::post('payments/{payment}/force-delete', [PaymentController::class, 'forceDelete'])->name('payments.force-delete');
 
-        Route::resource('permissions', PermissionController::class);
-        Route::post('permissions/{permission}/restore', [PermissionController::class, 'restore'])->name('permissions.restore');
-        Route::post('permissions/{permission}/force-delete', [PermissionController::class, 'forceDelete'])->name('permissions.force-delete');
-
         Route::resource('products', ProductController::class);
         Route::post('products/{product}/restore', [ProductController::class, 'restore'])->name('products.restore');
         Route::post('products/{product}/force-delete', [ProductController::class, 'forceDelete'])->name('products.force-delete');

@@ -16,7 +16,7 @@ class PermissionSeeder extends Seeder
         $resources = [
             'companies', 'calender-events', 'categories', 'clients', 'conversations',
             'invitations', 'invoices', 'memberships', 'messages', 'orders',
-            'payments', 'permissions', 'products', 'roles', 'suppliers', 'tasks'
+            'payments', 'products', 'roles', 'suppliers', 'tasks'
         ];
 
         foreach ($resources as $resource) {
