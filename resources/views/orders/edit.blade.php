@@ -72,20 +72,20 @@
                 <!-- Order Date -->
                 <div>
                     <x-input-label for="order_date" value="Order Date" />
-                    <x-text-input id="order_date" name="order_date" type="date" class="mt-1 block w-full" :value="old('order_date', $order->order_date)" required />
+                    <x-text-input id="order_date" name="order_date" type="date" class="mt-1 block w-full" :value="old('order_date', \Illuminate\Support\Carbon::parse($order->order_date)->format('Y-m-d'))" required />
                     <x-input-error class="mt-2" :messages="$errors->get('order_date')" />
                 </div>
 
                 <!-- Delivery Date -->
                 <div>
-                    <x-input-label for="delivery_date" value="Expected Delivery" />
-                    <x-text-input id="delivery_date" name="delivery_date" type="date" class="mt-1 block w-full" :value="old('delivery_date', $order->delivery_date)" />
+                    <x-input-label for="delivery_date" value="Delivery Date" />
+                    <x-text-input id="delivery_date" name="delivery_date" type="date" class="mt-1 block w-full" :value="old('delivery_date', $order->delivery_date ? \Illuminate\Support\Carbon::parse($order->delivery_date)->format('Y-m-d') : '')" />
                     <x-input-error class="mt-2" :messages="$errors->get('delivery_date')" />
                 </div>
 
                 <!-- Total Amount -->
                 <div>
-                    <x-input-label for="total_amount" value="Total Amount ($)" />
+                    <x-input-label for="total_amount" value="Total Amount" />
                     <x-text-input id="total_amount" name="total_amount" type="number" step="0.01" class="mt-1 block w-full" :value="old('total_amount', $order->total_amount)" required />
                     <x-input-error class="mt-2" :messages="$errors->get('total_amount')" />
                 </div>
@@ -93,7 +93,7 @@
 
             <!-- Notes -->
             <div class="space-y-4">
-                <x-input-label for="notes" value="Order Notes" />
+                <x-input-label for="notes" value="Notes" />
                 <textarea id="notes" name="notes" rows="4" class="mt-1 block w-full border-gray-200 focus:border-brand-500 focus:ring-brand-500 rounded-xl shadow-sm transition-all text-sm font-medium">{{ old('notes', $order->notes) }}</textarea>
                 <x-input-error class="mt-2" :messages="$errors->get('notes')" />
             </div>

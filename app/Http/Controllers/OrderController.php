@@ -22,7 +22,8 @@ class OrderController extends Controller
         $this->authorize('create', Order::class);
         $clients = $company->clients;
         $suppliers = $company->suppliers;
-        return view('orders.create', compact('company', 'clients', 'suppliers'));
+        $products = $company->products;
+        return view('orders.create', compact('company', 'clients', 'suppliers', 'products'));
     }
 
     public function store(StoreOrderRequest $request, Company $company)

@@ -27,6 +27,11 @@ class StoreOrderRequest extends FormRequest
             'status' => 'required|in:pending,processing,shipped,delivered,cancelled',
             'client_id' => 'required|exists:clients,id',
             'company_id' => 'required|exists:companies,id',
+            'supplier_id' => 'nullable|exists:suppliers,id',
+            'order_date' => 'required|date',
+            'delivery_date' => 'nullable|date',
+            'total_amount' => 'required|numeric|min:0',
+            'notes' => 'nullable|string',
         ];
     }
 
