@@ -54,14 +54,14 @@
                 @php
                     $startOfGrid = $date->copy()->startOfMonth()->startOfWeek(\Carbon\Carbon::SUNDAY);
                 @endphp
-                @for($i = 0; $i < 42; $i++)
+                @for($i = 0; $i < 35; $i++)
                     @php 
                         $currentDate = $startOfGrid->copy()->addDays($i);
                         $dayEvents = $events->filter(function($e) use ($currentDate) {
                             return \Carbon\Carbon::parse($e->event_date)->isSameDay($currentDate);
                         });
                     @endphp
-                    <div class="border-b border-r border-gray-50 p-3 flex flex-col gap-2 relative {{ $currentDate->month != $date->month ? 'bg-gray-50/20' : '' }} hover:bg-gray-50/50 transition-colors">
+                    <div class="border-b border-r border-gray-200 p-3 flex flex-col gap-2 relative {{ $currentDate->month != $date->month ? 'bg-gray-50/20' : '' }} hover:bg-gray-50/50 transition-colors">
                         <!-- Date Number -->
                         <div class="flex justify-end pr-1">
                             <span class="text-xs font-black {{ $currentDate->isToday() ? 'w-7 h-7 bg-brand-500 text-white rounded-xl' : ($currentDate->month != $date->month ? 'text-gray-200' : 'text-gray-900') }} flex items-center justify-center transition-all">
@@ -70,11 +70,11 @@
                         </div>
 
                         <!-- Events -->
-                        <div class="flex-1 space-y-1 overflow-y-auto custom-scrollbar">
+                        <div class="flex-1 space-y-1  custom-scrollbar">
                             @foreach($dayEvents as $event)
                                 @can('view', $event)
                                 <a href="{{ route('calender-events.show', [$company->slug, $event->id]) }}" 
-                                   class="block px-3 py-1.5 bg-brand-50 border border-brand-100 rounded-xl hover:bg-brand-500 hover:text-white transition-all group/chip">
+                                   class="block px-3 py-1.5 bg-brand-50 border border-brand-500 rounded-xl hover:bg-brand-500 hover:text-white transition-all group/chip">
                                     <div class="flex items-center gap-1.5 overflow-hidden">
                                         <div class="w-1.5 h-1.5 rounded-full bg-brand-500 group-hover/chip:bg-white shrink-0"></div>
                                         <span class="text-[9px] font-black truncate uppercase tracking-tighter">{{ $event->title }}</span>

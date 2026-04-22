@@ -27,6 +27,11 @@ class UpdateOrderRequest extends FormRequest
             'status' => 'sometimes|required|in:pending,processing,shipped,delivered,cancelled',
             'client_id' => 'sometimes|required|exists:clients,id',
             'company_id' => 'sometimes|required|exists:companies,id',
+            'supplier_id' => 'nullable|exists:suppliers,id',
+            'order_date' => 'sometimes|required|date',
+            'delivery_date' => 'nullable|date',
+            'total_amount' => 'sometimes|required|numeric|min:0',
+            'notes' => 'nullable|string'
         ];
     }
 
@@ -43,6 +48,9 @@ class UpdateOrderRequest extends FormRequest
             'status.in' => 'The status must be one of: pending, processing, shipped, delivered, cancelled.',
             'client_id.required' => 'A client must be assigned to this order.',
             'company_id.required' => 'A company must be assigned to this order.',
+            'order_date.required' => 'The order date is required.',
+            'total_amount.required' => 'The total amount is required.',
+            'total_amount.numeric' => 'The total amount must be a number.',
         ];
     }
 }
