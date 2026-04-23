@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="public/images/orbit-logo.svg" alt="OrbitErp Logo" width="80" />
-</p>
-
 <h1 align="center">OrbitErp</h1>
 
 <p align="center">
@@ -10,7 +6,7 @@
 
 <p align="center">
   <img alt="PHP" src="https://img.shields.io/badge/PHP-8.2-8892BF?logo=php&logoColor=white">
-  <img alt="Laravel" src="https://img.shields.io/badge/Laravel-11-FF2D20?logo=laravel&logoColor=white">
+  <img alt="Laravel" src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white">
   <img alt="Tailwind CSS" src="https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?logo=tailwindcss&logoColor=white">
   <img alt="Alpine.js" src="https://img.shields.io/badge/Alpine.js-3.x-8BC0D0?logo=alpine.js&logoColor=white">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
@@ -90,8 +86,8 @@ app/
 ├── Http/
 │   ├── Controllers/     # Thin controllers, route handling
 │   ├── Middleware/      # Membership & auth middleware
-│   ├── Requests/        # Form validation (one per action)
-│   └── Policies/        # Laravel Policies for authorization
+│   └── Requests/        # Form validation (one per action)
+├── Policies/        # Laravel Policies for authorization
 ├── Models/              # Eloquent models
 └── Services/            # Business logic layer (e.g., OrderService)
 
