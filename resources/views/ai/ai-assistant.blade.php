@@ -46,23 +46,9 @@
                 </div>
                 <h1 class="text-4xl md:text-6xl font-medium mb-6 text-gray-900">Hello, {{ explode(' ', auth()->user()->name)[0] }}</h1>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full mt-12">
-                    @foreach([
-                        ['icon' => '📄', 'title' => 'List all clients', 'text' => 'Get a quick summary of your customer base'],
-                        ['icon' => '💰', 'title' => 'Show revenue', 'text' => 'Analyze company performance for this month'],
-                        ['icon' => '📦', 'title' => 'Check stock', 'text' => 'Which products are currently low in inventory?'],
-                        ['icon' => '✍️', 'title' => 'Create invoice', 'text' => 'Generate a new billing request for a client']
-                    ] as $s)
-                    <button class="bg-gray-50 hover:bg-white hover:shadow-lg hover:border-blue-100 border border-gray-100 rounded-3xl p-5 text-left transition-all hover:scale-[1.02] active:scale-95 flex flex-col gap-3 group"
-                            @click="fillPrompt('{{ $s['title'] }}')">
-                        <span class="text-2xl transition-transform group-hover:scale-110">{{ $s['icon'] }}</span>
-                        <div class="space-y-1">
-                            <p class="text-sm font-semibold text-gray-900 transition-colors group-hover:text-blue-600">{{ $s['title'] }}</p>
-                            <p class="text-[11px] text-gray-500 leading-relaxed">{{ $s['text'] }}</p>
-                        </div>
-                    </button>
-                    @endforeach
-                </div>
+                <p class="text-lg text-gray-600 mt-8 max-w-2xl animate-gemini-fade" style="animation-delay: 0.2s">
+                    Your intelligent assistant for managing OrbitErp. Ask questions about your clients, products, or orders, and I'll help you find the information you need in seconds.
+                </p>
             </div>
 
             <!-- Chat Messages -->
@@ -146,14 +132,6 @@ function aiAssistant() {
         
         init() {
             this.$nextTick(() => this.$refs.inputField.focus());
-        },
-
-        fillPrompt(text) {
-            this.userInput = text;
-            this.$nextTick(() => {
-                this.autoResize();
-                this.sendMessage();
-            });
         },
 
         autoResize() {

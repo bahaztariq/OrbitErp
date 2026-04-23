@@ -24,7 +24,7 @@
     <body class="h-full antialiased text-gray-900">
         <div class="flex flex-col min-h-screen lg:flex-row">
             <!-- Left Pane: Branded Background (Hidden on Mobile) -->
-            <div class="relative hidden w-full lg:flex lg:w-1/2 bg-slate-900">
+            <!-- <div class="relative hidden w-full lg:flex lg:w-1/2 bg-slate-900">
                 <div class="absolute inset-0 opacity-20" style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png');"></div>
                 <div class="flex flex-col items-center justify-center w-full p-12 text-center text-white z-10">
                     <div class="mb-10">
@@ -53,9 +53,8 @@
                     </div>
                 </div>
                 
-                <!-- Subtle Gradient Overlay -->
                 <div class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-blue-600/10 to-transparent pointer-events-none"></div>
-            </div>
+            </div> -->
 
             <!-- Right Pane: Form Area -->
             <div class="flex flex-col items-center justify-center flex-1 px-6 py-12 lg:px-20 lg:py-24 bg-slate-50">
