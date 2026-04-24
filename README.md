@@ -145,7 +145,7 @@ Company ◆─── Product ─── Category
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/OrbitErp.git
+git clone https://github.com/bahaztariq/OrbitErp.git
 cd OrbitErp
 
 # 2. Install PHP dependencies
