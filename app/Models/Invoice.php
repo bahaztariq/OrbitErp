@@ -20,6 +20,8 @@ class Invoice extends Model
         'total_amount',
         'status',
         'company_id',
+        'created_by',
+        'updated_by',
     ];
 
     public function company()

@@ -1,17 +1,52 @@
 -- SQL Practice Challenges
 -- 1. Select all columns from the 'users' table.
+
+select * from users;
+
 -- 2. List the names and email addresses of all users.
+
+select name, email from users;
+
 -- 3. Find all companies located in a specific city.
+
+select * from companies where city = 'casablanca';
+
 -- 4. Select the name and price of all products.
+
+select name, price from products;
+
 -- 5. List all unique categories available in the products table.
+
+select distinct category from products;
+
 -- 6. Retrieve the first 10 orders placed.
+
+select * from orders limit 10;
+
 -- 7. Count the total number of clients in the 'clients' table.
+
+select count(*) from clients;
+
 -- 8. Find the maximum price of a product.
+
+select max(price) from products;
+
 -- 9. Find the average total amount of all orders.
+
+select avg(total_amount) from orders;
+
 -- 10. List all users who joined in the last 30 days.
 
+select * from users where created_at >= now() - interval '30 days';
+
 -- 11. Select all products with a price greater than 100.
+
+select * from products where price > 100;
+
 -- 12. Find all orders with a status of 'pending'.
+
+select * from orders where status = 'pending';
+
 -- 13. List all clients whose name starts with the letter 'A'.
 -- 14. Retrieve all products that are out of stock (stock = 0).
 -- 15. Find all users who do not have a phone number assigned.
@@ -107,4 +142,24 @@
 -- 97. Retrieve the top 3 categories by revenue.
 -- 98. Find the average order value (AOV) for each company.
 -- 99. List all products that share the same price.
+
+select name, price
+from products
+where price in (select price from products group by price having count(*) > 1);
+
 -- 100. Select the count of orders for each day of the week.
+
+select to_char(created_at, 'Day') as day, count(*) as count
+from orders
+where created_at >= now() - interval '1 week'
+group by day
+order by count desc;
+
+
+-- 101. List all users and the name of the company they belong to, along with their role.
+
+select u.name, c.name ,r.name
+from users u 
+join membership m on u.id = m.user_id
+join companies c on m.company_id = c.id
+join roles r on m.role_id = r.id;

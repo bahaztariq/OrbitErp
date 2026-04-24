@@ -24,6 +24,7 @@ class StoreMembershipRequest extends FormRequest
         return [
             'user_id' => 'required|exists:users,id',
             'company_id' => 'required|exists:companies,id',
+            'role_id' => 'nullable|exists:roles,id',
         ];
     }
 

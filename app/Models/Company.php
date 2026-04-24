@@ -19,7 +19,7 @@ class Company extends Model
 
     public function roles()
     {
-        return $this->hasMany(Role::class)->orWhere('company_id', null);
+        return $this->hasMany(Role::class)->orWhereNull('company_id');
     }
 
     public function suppliers()
