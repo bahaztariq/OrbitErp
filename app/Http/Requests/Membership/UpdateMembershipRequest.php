@@ -24,6 +24,7 @@ class UpdateMembershipRequest extends FormRequest
         return [
             'user_id' => 'sometimes|required|exists:users,id',
             'company_id' => 'sometimes|required|exists:companies,id',
+            'role_id' => 'nullable|exists:roles,id',
         ];
     }
 
