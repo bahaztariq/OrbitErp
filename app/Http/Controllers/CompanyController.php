@@ -39,10 +39,11 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request)
     {
-        $company = $request->user()->companies()->create($request->validated());
-
         $adminRole = Role::where('slug', 'admin')->first();
-        $company->users()->attach(auth()->id(), ['role_id' => $adminRole?->id]);
+
+        $company = $request->user()->companies()->create($request->validated(), [
+            'role_id' => $adminRole?->id
+        ]);
 
         return redirect()->route('companies.show', $company->slug)
             ->with('success', 'Company created successfully');
