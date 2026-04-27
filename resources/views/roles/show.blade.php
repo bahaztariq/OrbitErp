@@ -17,9 +17,11 @@
             </div>
         </div>
         <div class="flex gap-3">
+             @can('update', $role)
              <a href="{{ route('roles.edit', [$company->slug, $role->id]) }}" class="inline-flex items-center gap-2 px-6 py-2 bg-white border border-gray-200 text-gray-700 text-[10px] font-bold rounded-xl hover:bg-gray-50 transition-all uppercase tracking-widest">
                 Edit Matrix
             </a>
+            @endcan
             <a href="{{ route('roles.index', $company->slug) }}" class="inline-flex items-center gap-2 px-6 py-2 bg-white border border-gray-200 text-gray-700 text-[10px] font-bold rounded-xl hover:bg-gray-50 transition-all uppercase tracking-widest">
                 Back Archive
             </a>
@@ -72,6 +74,7 @@
                 </div>
              </div>
              
+             @can('delete', $role)
              <form action="{{ route('roles.destroy', [$company->slug, $role->id]) }}" method="POST" onsubmit="return confirm('Archive this role blueprint?');">
                 @csrf
                 @method('DELETE')
@@ -79,6 +82,7 @@
                     Delete Blueprint
                 </button>
             </form>
+            @endcan
         </div>
     </div>
 </div>

@@ -32,7 +32,9 @@
             </div>
             
             <div class="pt-4 border-t border-gray-50 flex items-center justify-between text-[10px] uppercase tracking-widest font-bold">
+                @can('view', $role)
                 <a href="{{ route('roles.show', [$company->slug, $role->id]) }}" class="text-brand-500 hover:text-brand-600 transition-colors">View Full Specs</a>
+                @endcan
                 <div class="flex gap-2">
                     @can('update', $role)
                     <a href="{{ route('roles.edit', [$company->slug, $role->id]) }}" class="text-gray-400 hover:text-brand-500 transition-colors">Edit</a>

@@ -40,7 +40,7 @@ class RoleController extends Controller
 
     public function edit(Company $company, Role $role)
     {
-        $this->authorize('view', $role);
+        $this->authorize('update', $role);
         $permissions = \App\Models\Permission::all();
         return view('roles.edit', compact('role', 'company', 'permissions'));
     }

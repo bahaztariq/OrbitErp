@@ -37,7 +37,7 @@ class RolePolicy
      */
     public function update(User $user, Role $role): bool
     {
-        return $user->hasPermission('update roles');
+        return $user->hasPermission('update roles') && $role->company_id !== null;
     }
 
     /**
@@ -45,7 +45,7 @@ class RolePolicy
      */
     public function delete(User $user, Role $role): bool
     {
-        return $user->hasPermission('delete roles');
+        return $user->hasPermission('delete roles') && $role->company_id !== null;
     }
 
     /**
@@ -53,7 +53,7 @@ class RolePolicy
      */
     public function restore(User $user, Role $role): bool
     {
-        return $user->hasPermission('restore roles');
+        return $user->hasPermission('restore roles') && $role->company_id !== null;
     }
 
     /**
@@ -61,6 +61,6 @@ class RolePolicy
      */
     public function forceDelete(User $user, Role $role): bool
     {
-        return $user->hasPermission('force-delete roles');
+        return $user->hasPermission('force-delete roles') && $role->company_id !== null;
     }
 }
