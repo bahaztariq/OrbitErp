@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $title ?? 'Dashboard' }} | OrbitErp</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
