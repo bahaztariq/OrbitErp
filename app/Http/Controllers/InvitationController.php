@@ -6,6 +6,7 @@ use App\Http\Requests\Invitation\StoreInvitationRequest;
 use App\Http\Requests\Invitation\UpdateInvitationRequest;
 use App\Models\Invitation;
 use App\Models\Company;
+use App\Models\Membership;
 use App\Mail\InvitationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;

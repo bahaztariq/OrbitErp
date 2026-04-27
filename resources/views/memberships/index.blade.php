@@ -22,7 +22,7 @@
         <div class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-6 relative overflow-hidden">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-brand-5 flex items-center justify-center text-brand-500 font-bold text-xl group-hover:bg-brand-500 group-hover:text-white transition-all transform duration-500 shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-brand-5 flex items-center justify-center text-brand-500 font-bold text-xl transition-all transform duration-500 shadow-sm">
                         {{ substr($membership->user->name, 0, 1) }}
                     </div>
                     <div>
@@ -53,8 +53,8 @@
                 </div>
                 
                 <div class="flex items-center justify-between pt-4 border-t border-gray-50 mt-4">
-                    <span class="inline-flex px-2 py-1 rounded-lg bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-widest">{{ $membership->user->role->name ?? 'No Role' }}</span>
-                    <a href="{{ route('conversations.start', [$company->slug, $membership->user->id]) }}" class="text-xs font-bold text-brand-500 hover:text-brand-600 transition-colors italic">Message Member →</a>
+                    <span class="inline-flex px-2 py-1 rounded-lg bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-widest">{{ $membership->role->name ?? 'No Role' }}</span>
+                    <a href="{{ route('conversations.start', [$company->slug, $membership->user->id]) }}" class="text-xs font-bold hover:opacity-80 transition-colors italic bg-brand-500 text-white px-2 py-1 rounded-lg p-2">Message Member</a>
                 </div>
             </div>
         </div>

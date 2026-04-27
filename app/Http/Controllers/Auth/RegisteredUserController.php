@@ -46,6 +46,10 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        if ($token = session('pending_invite_token')) {
+            return redirect()->route('invitations.accept', ['token' => $token]);
+        }
+
         return redirect(route('companies.index', absolute: false));
     }
 }
