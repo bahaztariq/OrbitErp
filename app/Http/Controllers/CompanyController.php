@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Product;
 use App\Models\Invoice;
 use App\Models\Order;
+use App\Models\Role;
 use App\Services\StatsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,9 +39,11 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request)
     {
-        $company = $request->user()->companies()->create($request->validated());
+        $adminRole = Role::where('slug', 'admin')->first();
 
-        $company->users()->attach(auth()->id(), ['role_id' => 1]); // admin role for creator
+        $company = $request->user()->companies()->create($request->validated(), [
+            'role_id' => $adminRole?->id
+        ]);
 
         return redirect()->route('companies.show', $company->slug)
             ->with('success', 'Company created successfully');

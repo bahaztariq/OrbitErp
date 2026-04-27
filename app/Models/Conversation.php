@@ -13,6 +13,7 @@ class Conversation extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'name',
         'title',
         'description',
         'company_id',
