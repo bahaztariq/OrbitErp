@@ -101,11 +101,35 @@ select * from orders where status = 'pending';
 -- 60. Show the percentage of orders that are 'shipped' vs total orders.
 
 -- 61. Subquery: Find products that have a price higher than the price of 'Product A'.
+
+select * from products where price > (select price from products where name = 'Product A');
+
 -- 62. Subquery: List all clients who placed an order in the same month as 'Client Y'.
+select c.name from clients c join orders o on c.id = o.client_id and c.id != 1 where to_char(o.created_at, 'YYYY-MM') in (select to_char(o.created_at,'YYYY-MM') from orders o where o.client_id = 1);
+
 -- 63. Subquery: Find the IDs of orders that contain the product 'Widget 1'.
+
+select o.id from orders o join order_items oi on o.id = oi.order_id where oi.product_id = (select id from products where name = 'Widget 1');
+
 -- 64. EXISTS: Find companies that have at least one product with stock > 100.
+
+select c.name from companies c where exists (select 1 from products p where p.company_id = c.id and p.stock > 100);
+
 -- 65. IN: List all users who belong to companies in the 'Europe' region.
+
+select u.name from users u where u.company_id in (select id from companies where region = 'Europe');
+
 -- 66. CTE: Create a temporary result set of top 10 clients and select from it.
+
+with top_clients as (
+    select c.name, count(*) as order_count
+    from clients c join orders o on c.id = o.client_id
+    group by c.name
+    order by order_count desc
+    limit 10
+)
+select * from top_clients;
+
 -- 67. Window Function: Rank products by price within each category.
 -- 68. Window Function: Show a running total of daily sales.
 -- 69. Window Function: Find the difference in price between a product and the one before it.
@@ -163,3 +187,14 @@ from users u
 join membership m on u.id = m.user_id
 join companies c on m.company_id = c.id
 join roles r on m.role_id = r.id;
+
+
+-- select each company clients that make an order
+
+select co.name , c.name ,count(o.*)
+from companies co 
+join clients c 
+on c.company_id = co.id
+join orders o 
+on o.client_id = c.id
+group BY co.id , c.id

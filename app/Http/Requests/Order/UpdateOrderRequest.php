@@ -31,7 +31,11 @@ class UpdateOrderRequest extends FormRequest
             'order_date' => 'sometimes|required|date',
             'delivery_date' => 'nullable|date',
             'total_amount' => 'sometimes|required|numeric|min:0',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
+            'items' => 'sometimes|required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.price' => 'required|numeric|min:0',
         ];
     }
 

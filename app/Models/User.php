@@ -47,7 +47,6 @@ class User extends Authenticatable
 
     public function hasPermission(string $permission, $company = null): bool
     {
-        // Try to get company from route if not provided
         $company = $company ?? request()->route('company');
 
         if (!$company) {

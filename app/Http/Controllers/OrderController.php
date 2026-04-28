@@ -7,6 +7,7 @@ use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Models\Order;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -29,7 +30,23 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request, Company $company)
     {
         $this->authorize('create', Order::class);
-        $order = $company->orders()->create($request->validated());
+        
+        $order = DB::transaction(function () use ($request, $company) {
+            $data = $request->validated();
+            $data['total_amount'] = collect($request->items)->sum(fn($item) => $item['quantity'] * $item['price']);
+            $order = $company->orders()->create($data);
+            
+            foreach ($request->items as $item) {
+                $order->orderItems()->create([
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                ]);
+            }
+            
+            return $order;
+        });
+
         return redirect()->route('orders.show', [$company->slug, $order->id])
             ->with('success', 'Order created successfully');
     }
@@ -45,13 +62,33 @@ class OrderController extends Controller
         $this->authorize('view', $order);
         $clients = $company->clients;
         $suppliers = $company->suppliers;
-        return view('orders.edit', compact('order', 'company', 'clients', 'suppliers'));
+        $products = $company->products;
+        return view('orders.edit', compact('order', 'company', 'clients', 'suppliers', 'products'));
     }
 
     public function update(UpdateOrderRequest $request, Company $company, Order $order)
     {
         $this->authorize('update', $order);
-        $order->update($request->validated());
+        
+        DB::transaction(function () use ($request, $order) {
+            $data = $request->validated();
+            if ($request->has('items')) {
+                $data['total_amount'] = collect($request->items)->sum(fn($item) => $item['quantity'] * $item['price']);
+            }
+            $order->update($data);
+            
+            if ($request->has('items')) {
+                $order->orderItems()->delete();
+                foreach ($request->items as $item) {
+                    $order->orderItems()->create([
+                        'product_id' => $item['product_id'],
+                        'quantity' => $item['quantity'],
+                        'price' => $item['price'],
+                    ]);
+                }
+            }
+        });
+
         return redirect()->route('orders.show', [$company->slug, $order->id])
             ->with('success', 'Order updated successfully');
     }

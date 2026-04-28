@@ -86,9 +86,40 @@
                 <!-- Total Amount -->
                 <div>
                     <x-input-label for="total_amount" value="Total Amount ($)" />
-                    <x-text-input id="total_amount" name="total_amount" type="number" step="0.01" class="mt-1 block w-full" :value="old('total_amount', '0.00')" required />
+                    <x-text-input id="total_amount" name="total_amount" type="number" step="0.01" class="mt-1 block w-full bg-gray-50" :value="old('total_amount', '0.00')" readonly required />
                     <x-input-error class="mt-2" :messages="$errors->get('total_amount')" />
                 </div>
+            </div>
+
+            <!-- Order Items Section -->
+            <div class="space-y-4 pt-6 border-t border-gray-50">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-gray-900 tracking-tight">Order Items</h3>
+                    <button type="button" id="add-item" class="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-50 text-brand-600 text-xs font-bold rounded-lg hover:bg-brand-100 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add Item
+                    </button>
+                </div>
+                
+                <div class="border border-gray-100 rounded-2xl overflow-hidden">
+                    <table class="w-full text-left border-collapse" id="items-table">
+                        <thead>
+                            <tr class="bg-gray-50/50 border-b border-gray-100 italic">
+                                <th class="py-3 px-4 text-xs font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Product</th>
+                                <th class="py-3 px-4 text-xs font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap w-24 text-center">Qty</th>
+                                <th class="py-3 px-4 text-xs font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap w-32 text-right">Unit Price</th>
+                                <th class="py-3 px-4 text-xs font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap w-32 text-right">Total</th>
+                                <th class="py-3 px-4 w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 italic font-medium">
+                            <!-- Rows added via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <x-input-error class="mt-2" :messages="$errors->get('items')" />
             </div>
 
             <!-- Notes -->
@@ -109,4 +140,92 @@
         </form>
     </div>
 </div>
+
+<template id="item-row-template">
+    <tr class="group hover:bg-gray-50/50 transition-colors item-row">
+        <td class="py-3 px-4">
+            <select name="items[{index}][product_id]" class="product-select block w-full border-0 focus:ring-0 bg-transparent text-sm font-medium p-0" required>
+                <option value="">Select product</option>
+                @foreach($products as $product)
+                    <option value="{{ $product->id }}" data-price="{{ $product->price }}">{{ $product->name }}</option>
+                @endforeach
+            </select>
+        </td>
+        <td class="py-3 px-4">
+            <input type="number" name="items[{index}][quantity]" value="1" min="1" class="quantity-input block w-full border-0 focus:ring-0 bg-transparent text-sm font-medium text-center p-0" required>
+        </td>
+        <td class="py-3 px-4 text-right">
+            <div class="flex items-center justify-end">
+                <span class="text-gray-400 text-xs mr-1">$</span>
+                <input type="number" name="items[{index}][price]" value="0.00" step="0.01" min="0" class="price-input block w-32 border-0 focus:ring-0 bg-transparent text-sm font-medium text-right p-0" required>
+            </div>
+        </td>
+        <td class="py-3 px-4 text-right font-bold text-gray-900">
+            $<span class="line-total">0.00</span>
+        </td>
+        <td class="py-3 px-4 text-center">
+            <button type="button" class="remove-item text-gray-400 hover:text-rose-500 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </button>
+        </td>
+    </tr>
+</template>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tableBody = document.querySelector('#items-table tbody');
+        const addItemBtn = document.getElementById('add-item');
+        const template = document.getElementById('item-row-template').innerHTML;
+        const totalAmountInput = document.getElementById('total_amount');
+        let index = 0;
+
+        function updateGrandTotal() {
+            let total = 0;
+            document.querySelectorAll('.line-total').forEach(span => {
+                total += parseFloat(span.textContent) || 0;
+            });
+            totalAmountInput.value = total.toFixed(2);
+        }
+
+        function updateLineTotal(row) {
+            const qty = parseFloat(row.querySelector('.quantity-input').value) || 0;
+            const price = parseFloat(row.querySelector('.price-input').value) || 0;
+            const total = qty * price;
+            row.querySelector('.line-total').textContent = total.toFixed(2);
+            updateGrandTotal();
+        }
+
+        function addItem() {
+            const newRowHtml = template.replace(/{index}/g, index++);
+            const tr = document.createElement('tr');
+            tr.innerHTML = newRowHtml;
+            const newRow = tr.firstElementChild || tr; // Handle template content correctly
+            tableBody.insertAdjacentHTML('beforeend', newRowHtml);
+            
+            const addedRow = tableBody.lastElementChild;
+            
+            // Listen for changes
+            addedRow.querySelector('.product-select').addEventListener('change', function() {
+                const price = this.options[this.selectedIndex].dataset.price || 0;
+                addedRow.querySelector('.price-input').value = parseFloat(price).toFixed(2);
+                updateLineTotal(addedRow);
+            });
+
+            addedRow.querySelector('.quantity-input').addEventListener('input', () => updateLineTotal(addedRow));
+            addedRow.querySelector('.price-input').addEventListener('input', () => updateLineTotal(addedRow));
+            
+            addedRow.querySelector('.remove-item').addEventListener('click', function() {
+                addedRow.remove();
+                updateGrandTotal();
+            });
+        }
+
+        addItemBtn.addEventListener('click', addItem);
+
+        // Add first item by default
+        addItem();
+    });
+</script>
 @endsection
