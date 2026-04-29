@@ -82,13 +82,13 @@
                 <!-- Dates -->
                 <div>
                     <x-input-label for="start_date" value="Start Date" />
-                    <x-text-input id="start_date" name="start_date" type="date" class="mt-1 block w-full" :value="old('start_date', $task->start_date)" required />
+                    <x-text-input id="start_date" name="start_date" type="date" class="mt-1 block w-full" :value="old('start_date', \Illuminate\Support\Carbon::parse($task->start_date)->format('Y-m-d'))" required />
                     <x-input-error class="mt-2" :messages="$errors->get('start_date')" />
                 </div>
 
                 <div>
                     <x-input-label for="end_date" value="Due Date" />
-                    <x-text-input id="end_date" name="end_date" type="date" class="mt-1 block w-full" :value="old('end_date', $task->end_date)" required />
+                    <x-text-input id="end_date" name="end_date" type="date" class="mt-1 block w-full" :value="old('end_date', \Illuminate\Support\Carbon::parse($task->end_date)->format('Y-m-d'))" required />
                     <x-input-error class="mt-2" :messages="$errors->get('end_date')" />
                 </div>
             </div>

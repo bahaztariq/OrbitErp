@@ -72,14 +72,14 @@
                 <!-- Issue Date -->
                 <div>
                     <x-input-label for="issue_date" value="Issue Date" />
-                    <x-text-input id="issue_date" name="issue_date" type="date" class="mt-1 block w-full" :value="old('issue_date', $invoice->issue_date)" required />
+                    <x-text-input id="issue_date" name="issue_date" type="date" class="mt-1 block w-full" :value="old('issue_date', \Illuminate\Support\Carbon::parse($invoice->issue_date)->format('Y-m-d'))" required />
                     <x-input-error class="mt-2" :messages="$errors->get('issue_date')" />
                 </div>
 
                 <!-- Due Date -->
                 <div>
                     <x-input-label for="due_date" value="Due Date" />
-                    <x-text-input id="due_date" name="due_date" type="date" class="mt-1 block w-full" :value="old('due_date', $invoice->due_date)" required />
+                    <x-text-input id="due_date" name="due_date" type="date" class="mt-1 block w-full" :value="old('due_date', \Illuminate\Support\Carbon::parse($invoice->due_date)->format('Y-m-d'))" required />
                     <x-input-error class="mt-2" :messages="$errors->get('due_date')" />
                 </div>
 

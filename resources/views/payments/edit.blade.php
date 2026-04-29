@@ -50,7 +50,7 @@
                 <!-- Payment Date -->
                 <div>
                     <x-input-label for="payment_date" value="Payment Date" />
-                    <x-text-input id="payment_date" name="payment_date" type="date" class="mt-1 block w-full" :value="old('payment_date', $payment->payment_date)" required />
+                    <x-text-input id="payment_date" name="payment_date" type="date" class="mt-1 block w-full" :value="old('payment_date', \Illuminate\Support\Carbon::parse($payment->payment_date)->format('Y-m-d'))" required />
                     <x-input-error class="mt-2" :messages="$errors->get('payment_date')" />
                 </div>
 
