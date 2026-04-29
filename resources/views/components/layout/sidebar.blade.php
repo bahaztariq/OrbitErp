@@ -19,7 +19,6 @@
         <nav x-data="{ selected: '{{ Request::routeIs('dashboard') ? 'dashboard' : (Request::segment(3) ?? '') }}' }">
             <ul class="space-y-0.5">
                 <!-- Dashboard -->
-                @can('viewAny', App\Models\Company::class)
                 <li>
                     <a href="{{ isset($company) ? (is_object($company) ? route('companies.show', $company->slug) : route('companies.show', $company)) : route('companies.index') }}" 
                        class="menu-item {{ Request::routeIs('companies.show') || Request::routeIs('companies.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
@@ -30,7 +29,6 @@
                         <span x-show="$store.sidebar.isExpanded" class="truncate">Dashboard</span>
                     </a>
                 </li>
-                @endcan
 
                 @if(isset($company))
                 <!-- AI Assistant -->

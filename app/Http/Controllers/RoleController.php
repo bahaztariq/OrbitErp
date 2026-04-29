@@ -20,7 +20,14 @@ class RoleController extends Controller
     public function create(Company $company)
     {
         $this->authorize('create', Role::class);
-        $permissions = \App\Models\Permission::all();
+        $permissions = \App\Models\Permission::whereNotIn('name', [
+            'view companies',
+            'create companies',
+            'view-any companies'
+        ])->get()->groupBy(function($perm) {
+            $parts = explode(' ', $perm->name, 2);
+            return $parts[1] ?? 'other';
+        });
         return view('roles.create', compact('company', 'permissions'));
     }
 
@@ -28,6 +35,7 @@ class RoleController extends Controller
     {
         $this->authorize('create', Role::class);
         $role = $company->roles()->create($request->validated());
+        $role->permissions()->sync($request->permission_ids);
         return redirect()->route('roles.index', $company->slug)
             ->with('success', 'Role created successfully');
     }
@@ -41,7 +49,14 @@ class RoleController extends Controller
     public function edit(Company $company, Role $role)
     {
         $this->authorize('update', $role);
-        $permissions = \App\Models\Permission::all();
+        $permissions = \App\Models\Permission::whereNotIn('name', [
+            'view companies',
+            'create companies',
+            'view-any companies'
+        ])->get()->groupBy(function($perm) {
+            $parts = explode(' ', $perm->name, 2);
+            return $parts[1] ?? 'other';
+        });
         return view('roles.edit', compact('role', 'company', 'permissions'));
     }
 
@@ -49,6 +64,7 @@ class RoleController extends Controller
     {
         $this->authorize('update', $role);
         $role->update($request->validated());
+        $role->permissions()->sync($request->permission_ids);
         return redirect()->route('roles.index', $company->slug)
             ->with('success', 'Role updated successfully');
     }

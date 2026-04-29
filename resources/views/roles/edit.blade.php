@@ -45,17 +45,37 @@
             </div>
 
             <!-- Permissions Mapping -->
-            <div class="space-y-6 pt-6 border-t border-gray-50">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Authorization Matrix</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="space-y-12 pt-10 border-t border-gray-50">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest">Authorization Matrix</h3>
+                    <span class="text-[10px] font-bold text-gray-400 px-3 py-1 bg-gray-50 rounded-full">Grouped by Resource</span>
+                </div>
+
+                <div class="space-y-10">
                     @php $rolePermIds = $role->permissions->pluck('id')->toArray(); @endphp
-                    @foreach($permissions as $permission)
-                    <div class="flex items-center gap-3 p-4 rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all cursor-pointer group">
-                         <input type="checkbox" name="permission_ids[]" value="{{ $permission->id }}" id="perm_{{ $permission->id }}" class="rounded text-brand-500 focus:ring-brand-500 border-gray-200 transition-all" {{ in_array($permission->id, $rolePermIds) ? 'checked' : '' }}>
-                          <div>
-                            <label for="perm_{{ $permission->id }}" class="block text-xs font-bold text-gray-900 cursor-pointer group-hover:text-brand-500 transition-colors uppercase tracking-widest">{{ $permission->name }}</label>
-                            <span class="text-[9px] text-gray-400 line-clamp-1 lowercase">{{ $permission->description }}</span>
-                         </div>
+                    @foreach($permissions as $resource => $group)
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <h4 class="text-xs font-black text-brand-600 uppercase tracking-widest whitespace-nowrap">{{ str_replace('-', ' ', $resource) }}</h4>
+                            <div class="h-px w-full bg-gray-100"></div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                            @foreach($group as $permission)
+                            <div class="relative flex items-start p-4 rounded-xl border border-gray-100 bg-white hover:border-brand-200 hover:shadow-sm transition-all group cursor-pointer">
+                                <div class="flex items-center h-5">
+                                    <input type="checkbox" name="permission_ids[]" value="{{ $permission->id }}" id="perm_{{ $permission->id }}" 
+                                           class="h-4 w-4 rounded text-brand-600 border-gray-300 focus:ring-brand-500 transition-all cursor-pointer"
+                                           {{ in_array($permission->id, $rolePermIds) ? 'checked' : '' }}>
+                                </div>
+                                <div class="ml-3 text-xs">
+                                    <label for="perm_{{ $permission->id }}" class="font-bold text-gray-700 cursor-pointer group-hover:text-brand-700 transition-colors uppercase tracking-tight">
+                                        {{ explode(' ', $permission->name)[0] }}
+                                    </label>
+                                    <p class="text-gray-400 mt-0.5 line-clamp-1 italic font-medium">{{ $permission->description }}</p>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
                     @endforeach
                 </div>
