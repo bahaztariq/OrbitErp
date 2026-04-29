@@ -54,7 +54,6 @@ class CompanyController extends Controller
      */
     public function show(Company $company, StatsService $statsService)
     {
-        $this->authorize('view', $company);
         
         $stats = $statsService->getCompanyMetrics($company);
         $monthlyRevenue = $statsService->getMonthlyRevenue($company);

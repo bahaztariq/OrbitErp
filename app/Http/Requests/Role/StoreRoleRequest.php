@@ -28,6 +28,8 @@ class StoreRoleRequest extends FormRequest
             'description' => 'nullable|string',
             'is_active' => 'boolean',
             'company_id' => 'required|exists:companies,id',
+            'permission_ids' => 'nullable|array',
+            'permission_ids.*' => 'exists:permissions,id',
         ];
     }
 
